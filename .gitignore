@@ -2,6 +2,8 @@
 .env
 .dev.env
 .test.env
+.env.dev
+.env.shared
 
 # python evironment
 .venv
@@ -9,3 +11,6 @@ venv
 
 # snyk
 .dccache
+
+# python
+__pycache__
