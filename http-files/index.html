@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        body > center {
+            min-height: 90vh;
+            width: 100%;
+            display: grid;
+            place-items: center;
+        }
+        body > center > div {
+            width: fit-content;
+        }
+        div > p {
+            font-size: smaller;
+            color: #888;
+        }
+        body > hr {
+            margin: 0 3rem;
+        }
+        body > footer {
+            width: 100%;
+            height: 5vh;
+        }
+        footer > center {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+        }
+        footer > center > p {
+            font-size: small;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <div>
+            <h1>Hello World!</h1>
+            <hr />
+            <p>This HTTP-server is working!</p>
+        </div>
+    </center>
+    <hr />
+    <footer>
+        <center>
+            <p>This is a test server for testing HTTP functionality.</p>
+        </center>
+    </footer>
+</body>
+</html>

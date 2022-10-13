@@ -1,0 +1,11 @@
+# environment variables
+.env
+.dev.env
+.test.env
+
+# python evironment
+.venv
+venv
+
+# snyk
+.dccache
