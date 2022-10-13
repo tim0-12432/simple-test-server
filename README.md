@@ -44,8 +44,8 @@ docker run --name http-test -t -d -p 8080:80 --env TYPE=http ghcr.io/tim0-12432/
 docker run --name ftp-test -t -d -p 21:21 --env TYPE=ftp -v ftp_files:/app/ftp-files ghcr.io/tim0-12432/simple-test-server:latest
 ```
 
-User: anonymous -> no password
-User: admin -> test
+- User: anonymous, no password -> only read access
+- User: admin, test -> read and write access
 
 ## Environment variables
 

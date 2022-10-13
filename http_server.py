@@ -1,6 +1,8 @@
 from encodings import utf_8
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 class HttpServer:
     class Handler(SimpleHTTPRequestHandler):
@@ -32,6 +34,8 @@ class HttpServer:
 
 
     def __init__(self) -> None:
+        formatter = "%(name)s - - [%(asctime)s] %(message)s"
+        logging.basicConfig(level=logging.INFO, format=formatter)
         self.address = ("", 80)
 
     def set_address(self, host: str, port: int) -> None:
@@ -39,12 +43,12 @@ class HttpServer:
 
     def start(self) -> None:
         self._server = HTTPServer(self.address, self.Handler)
-        print(f"HTTP-server is ready and serving on {self._server.server_address[0]}:{self._server.server_port}.")
+        logger.info(f"HTTP-server is ready and serving on {self._server.server_address[0]}:{self._server.server_port}.")
         self._server.serve_forever()
 
     def stop(self) -> None:
         self._server.server_close()
-        print("HTTP-server stopped...")
+        logger.info("HTTP-server stopped...")
         self._server = None
 
 
