@@ -16,12 +16,11 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Get the tag
-      id: vartag
-      run: echo ::set-output name=tag::$(date +"%Y%m%d-%H%M%S")
+      run: echo "vartag=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/tim0-12432/simple-test-server:${{ steps.vartag.outputs.tag }}
+      run: docker build . --file Dockerfile --tag ghcr.io/tim0-12432/simple-test-server:${{ env.vartag }}
     - name: Push the tagged Docker image
-      run: docker push ghcr.io/tim0-12432/simple-test-server:${{ steps.vartag.outputs.tag }}
+      run: docker push ghcr.io/tim0-12432/simple-test-server:${{ env.vartag }}
     - name: Build the latest Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/tim0-12432/simple-test-server:latest
     - name: Push the latest Docker image

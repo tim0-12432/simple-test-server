@@ -32,11 +32,20 @@ To run the servers in a docker container, you need to have docker installed. The
 docker pull ghcr.io/tim0-12432/simple-test-server:latest
 ```
 
-Example: Run the HTTP server on port 8080:
+**Example**: Run the HTTP server on port 8080:
 
 ```bash
-docker run --name http-test -d -p 8080:80 --env TYPE=http ghcr.io/tim0-12432/simple-test-server:latest
+docker run --name http-test -t -d -p 8080:80 --env TYPE=http ghcr.io/tim0-12432/simple-test-server:latest
 ```
+
+**Example**: Run the FTP server on port 21 with custom files:
+
+```bash
+docker run --name ftp-test -t -d -p 21:21 --env TYPE=ftp -v ftp_files:/app/ftp-files ghcr.io/tim0-12432/simple-test-server:latest
+```
+
+User: anonymous -> no password
+User: admin -> test
 
 ## Environment variables
 
