@@ -53,7 +53,7 @@ The following environment variables can be used to configure the servers:
 
 |   Variable | Description | Default value |
 | ---------: | ----------- | :------------ |
-|     `TYPE` | The type of the server. Can be `http` or `ftp`. | `http` |
+|     `TYPE` | The type of the server. Can be `http`, `ssh` or `ftp`. | `http` |
 |  `ADDRESS` | The host:port on which the server should listen. | `0.0.0.0:<application>` |
 
 ## Licensing

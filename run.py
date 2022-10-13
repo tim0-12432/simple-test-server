@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from http_server import HttpServer
 from ftp_server import FtpServer
+from ssh_server import SshServer
 import os
 
 if __name__ == '__main__':
@@ -16,6 +17,8 @@ if __name__ == '__main__':
         server = FtpServer()
     elif server_type == "http":
         server = HttpServer()
+    elif server_type == "ssh":
+        server = SshServer()
 
     if "ADDRESS" in config:
         address = config["ADDRESS"].split(":")
