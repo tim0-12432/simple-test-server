@@ -1,10 +1,11 @@
 import sshim
 import re
+from abstract_server import Server
 import logging
 
 logger = logging.getLogger(__name__)
 
-class SshServer:
+class SshServer(Server):
     def __init__(self) -> None:
         formatter = "%(process)s - - [%(asctime)s] %(message)s"
         logging.basicConfig(level=logging.INFO, format=formatter)

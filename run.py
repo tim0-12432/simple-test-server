@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from abstract_server import Server
 from http_server import HttpServer
 from ftp_server import FtpServer
 from ssh_server import SshServer
@@ -9,9 +10,9 @@ if __name__ == '__main__':
 
     config = os.environ
 
-    server = None
+    server: Server = None
 
-    server_type = config.get("TYPE", "http").lower()
+    server_type: str = config.get("TYPE", "http").lower()
 
     if server_type == "ftp":
         server = FtpServer()

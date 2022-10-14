@@ -1,10 +1,11 @@
 from encodings import utf_8
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from abstract_server import Server
 import logging
 
 logger = logging.getLogger(__name__)
 
-class HttpServer:
+class HttpServer(Server):
     class Handler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.http_directory = "./http-files"

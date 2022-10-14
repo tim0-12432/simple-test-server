@@ -1,8 +1,9 @@
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
+from abstract_server import Server
 
-class FtpServer:
+class FtpServer(Server):
     def __init__(self) -> None:
         self._authorizer = DummyAuthorizer()
         self._authorizer.add_user("admin", "test", "./ftp-files", perm="elradfmwMT")

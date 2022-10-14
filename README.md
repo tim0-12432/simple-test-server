@@ -6,6 +6,7 @@ This is a collection of simple servers for testing. They are written in Python a
 
 - [HTTP server](./http_server.py)
 - [FTP server](./ftp_server.py)
+- [SSH server](./ssh_server.py)
 
 ## Running the servers
 
@@ -16,6 +17,7 @@ To run the servers locally, you need to have Python 3 and all [requirements](./r
 ```bash
 python http_server.py
 python ftp_server.py
+python ssh_server.py
 ```
 
 or you can run it by configuring the environment variables via a `.env`-file and calling the `run.py` script directly:
