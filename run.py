@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from abstract_server import Server
 from http_server import HttpServer
 from ftp_server import FtpServer
+from smtp_server import SmtpServer
 from ssh_server import SshServer
 import os
 
@@ -20,6 +21,8 @@ if __name__ == '__main__':
         server = HttpServer()
     elif server_type == "ssh":
         server = SshServer()
+    elif server_type == "smtp":
+        server = SmtpServer()
 
     if "ADDRESS" in config:
         address = config["ADDRESS"].split(":")
