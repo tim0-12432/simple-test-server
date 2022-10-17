@@ -1,6 +1,7 @@
 from types import NoneType
 from typing import Union
 from dotenv import load_dotenv
+from art import tprint
 from abstract_server import Server
 from http_server import HttpServer
 from ftp_server import FtpServer
@@ -33,6 +34,7 @@ if __name__ == '__main__':
 
     if server is not None:
         try:
+            tprint(server.name(), font="medium", chr_ignore=True)
             server.start()
         except KeyboardInterrupt:
             server.stop()
