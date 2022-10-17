@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Type
 
 class Server(ABC):
     @abstractmethod
@@ -12,3 +13,7 @@ class Server(ABC):
     @abstractmethod
     def stop(self) -> None:
         pass
+
+    @classmethod
+    def name(cls: Type) -> str:
+        return f'{cls.__name__}'
