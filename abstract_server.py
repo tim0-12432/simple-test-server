@@ -16,4 +16,4 @@ class Server(ABC):
 
     @classmethod
     def name(cls: Type) -> str:
-        return f'{cls.__name__}'
+        return f"{cls.__name__}"

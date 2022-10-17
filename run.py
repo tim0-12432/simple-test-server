@@ -5,6 +5,7 @@ from art import tprint
 from abstract_server import Server
 from http_server import HttpServer
 from ftp_server import FtpServer
+from smb_server import SmbServer
 from smtp_server import SmtpServer
 from ssh_server import SshServer
 import os
@@ -26,15 +27,19 @@ if __name__ == '__main__':
         server = SshServer()
     elif server_type == "smtp":
         server = SmtpServer()
+    elif server_type == "smb":
+        server = SmbServer()
 
     if "ADDRESS" in config:
         address = config["ADDRESS"].split(":")
         if len(address) == 2 and address[1].isdigit():
             server.set_address(address[0], int(address[1]))
+        if len(address) == 1 and not address[0].isdigit():
+            server.set_address(address[0], server.address[1])
 
     if server is not None:
         try:
-            tprint(server.name(), font="medium", chr_ignore=True)
+            tprint(f"  {server.name()}", font="medium", chr_ignore=True)
             server.start()
         except KeyboardInterrupt:
             server.stop()
