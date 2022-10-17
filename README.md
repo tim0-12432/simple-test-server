@@ -20,6 +20,7 @@ docker run --name http-test -t -d -p 8080:80 ghcr.io/tim0-12432/simple-test-serv
    2. [FTP Server](#ftp-server)
    3. [SSH Server](#ssh-server)
    4. [SMTP Server](#smtp-server)
+   5. [SMB Server](#smb-server)
 5. [Licensing](#licensing)
 
 ## Server types
@@ -40,6 +41,7 @@ python http_server.py
 python ftp_server.py
 python ssh_server.py
 python smtp_server.py
+python smb_server.py
 ```
 
 or you can run it by configuring the environment variables via a `.env`-file and calling the `run.py` script directly:
@@ -77,7 +79,7 @@ The following environment variables can be used to configure the servers:
 
 |   Variable | Description | Default value |
 | ---------: | ----------- | :------------ |
-|     `TYPE` | The type of the server. Can be `http`, `ssh`, `smtp` or `ftp`. | `http` |
+|     `TYPE` | The type of the server. Can be `http`, `ssh`, `smtp`, `smb` or `ftp`. | `http` |
 |  `ADDRESS` | The host:port on which the server should listen. | `0.0.0.0:<application>` |
 
 ## Additional information for testing if the server works
@@ -120,6 +122,12 @@ You can send emails to the SMTP server with your preferred SMTP client.
 ```powershell
 Send-MailMessage -From 'User01 <user01@test.com>' -To 'User02 <user02@test.com>' -Subject 'Test mail' -Body 'This is a test message.' -SmtpServer '127.0.0.1' -Port 587
 ```
+
+### SMB server
+
+By default, the SMB server is reachable at the port `445`. But you can change this by setting the `ADDRESS` environment variable.
+
+You can connect to the SMB server via network share.
 
 ## Licensing
 
