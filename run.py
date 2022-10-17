@@ -1,3 +1,5 @@
+from types import NoneType
+from typing import Union
 from dotenv import load_dotenv
 from abstract_server import Server
 from http_server import HttpServer
@@ -11,7 +13,7 @@ if __name__ == '__main__':
 
     config = os.environ
 
-    server: Server = None
+    server: Union[Server, NoneType] = None
 
     server_type: str = config.get("TYPE", "http").lower()
 
