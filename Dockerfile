@@ -1,15 +1,33 @@
 # Requirements
-FROM python:3.7.15-slim
+FROM python:3.10-slim AS builder
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc
 COPY /requirements.txt /app/requirements.txt
 WORKDIR /app
-RUN pip install -r requirements.txt
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBCONF_NOWARNINGS="yes"
+RUN python -m pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 # Run App
+FROM python:3.10-slim AS runner
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 COPY /ftp-files /app/ftp-files
 COPY /http-files /app/http-files
+COPY /smb-share /app/smb-share
+COPY /abstract_server.py /app/abstract_server.py
 COPY /ftp_server.py /app/ftp_server.py
 COPY /http_server.py /app/http_server.py
+COPY /smtp_server.py /app/smtp_server.py
+COPY /smb_server.py /app/smb_server.py
+COPY /ssh_server.py /app/ssh_server.py
 COPY /run.py /app/run.py
+WORKDIR /app
 ENTRYPOINT [ "python" ]
 CMD ["run.py"]
 
