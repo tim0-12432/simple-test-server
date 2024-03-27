@@ -1,5 +1,5 @@
 # Requirements
-FROM python:3.10-slim AS builder
+FROM python:3.11-slim AS builder
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc
 COPY /requirements.txt /app/requirements.txt
@@ -14,7 +14,7 @@ RUN python -m pip install --upgrade pip && \
     pip install -r requirements.txt
 
 # Run App
-FROM python:3.10-slim AS runner
+FROM python:3.11-slim AS runner
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY /ftp-files /app/ftp-files
