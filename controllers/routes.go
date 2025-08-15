@@ -58,6 +58,6 @@ func InitializePocketBaseRoutes(root *gin.RouterGroup) {
 	handler := http.StripPrefix("/pb", proxy)
 
 	g := root.Group("/pb")
-	g.Any("/", gin.WrapH(handler))
+	g.Any("", gin.WrapH(handler))
 	g.Any("/*path", gin.WrapH(handler))
 }

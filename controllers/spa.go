@@ -9,7 +9,7 @@ import (
 var distPath = "./frontend/dist"
 
 func InitializeSpaRoutes(root *gin.RouterGroup) {
-	spa := root.Group("/spa")
+	spa := root.Group("/static")
 
 	root.GET("/", func(c *gin.Context) {
 		c.File(distPath + "/index.html")

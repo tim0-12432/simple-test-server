@@ -13,11 +13,13 @@ func InitializeEnvConfig() {
 }
 
 type envConfig struct {
-	Host   string `mapstructure:"HOST"`
-	Port   string `mapstructure:"PORT"`
-	Env    string `mapstructure:"ENV"`
-	PbHost string `mapstructure:"PB_HOST"`
-	PbPort string `mapstructure:"PB_PORT"`
+	Host      string `mapstructure:"HOST"`
+	Port      string `mapstructure:"PORT"`
+	Env       string `mapstructure:"ENV"`
+	PbHost    string `mapstructure:"PB_HOST"`
+	PbPort    string `mapstructure:"PB_PORT"`
+	AdminUser string `mapstructure:"ADMIN_USER"`
+	AdminPass string `mapstructure:"ADMIN_PASS"`
 }
 
 func loadEnvVariables() (config *envConfig) {
