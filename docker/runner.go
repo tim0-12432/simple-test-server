@@ -8,6 +8,7 @@ import (
 )
 
 type ServerConfiguration struct {
+	name         string            `json:"name"`
 	portMapping  map[int]int       `json:"ports"`
 	envVariables map[string]string `json:"env"`
 }

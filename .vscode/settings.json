@@ -1,0 +1,14 @@
+{
+  "rest-client.environmentVariables": {
+    "$shared": {
+      "base_url": "http://localhost:8080",
+      "pb_url": "http://localhost:8080/pb"
+    },
+    "dev": {
+      "base_url": "http://localhost:8000",
+      "pb_url": "http://localhost:8000/pb",
+      "admin_email": "dev@test.com",
+      "admin_pass": "test1234"
+    }
+  }
+}

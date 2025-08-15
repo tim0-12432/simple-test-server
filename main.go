@@ -25,8 +25,6 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	docker.InitializeDockerClient()
-
 	db.InitializeDatabase()
 
 	controllers.InitializeRoutes()
@@ -59,9 +57,6 @@ func main() {
 	}
 	if err := docker.StopAllContainers(); err != nil {
 		log.Printf("Failed to stop Docker containers: %v", err)
-	}
-	if err := docker.CloseDockerClient(); err != nil {
-		log.Printf("Failed to close Docker client: %v", err)
 	}
 
 	log.Println("Server stopped gracefully")

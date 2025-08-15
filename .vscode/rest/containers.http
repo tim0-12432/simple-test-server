@@ -1,0 +1,24 @@
+
+# List all possible servers
+GET {{base_url}}/api/v1/servers
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8000
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*
+
+###
+
+# Start a new MQTT server
+POST {{base_url}}/api/v1/servers/mqtt
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8000
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*
+
+{
+  "name": "",
+  "ports": {},
+  "env": {}
+}

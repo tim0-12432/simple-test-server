@@ -23,6 +23,14 @@ type envConfig struct {
 }
 
 func loadEnvVariables() (config *envConfig) {
+	viper.SetDefault("HOST", "0.0.0.0")
+	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("ENV", "PROD")
+	viper.SetDefault("PB_HOST", "localhost")
+	viper.SetDefault("PB_PORT", "8090")
+	viper.SetDefault("ADMIN_USER", "admin@hosting.test")
+	viper.SetDefault("ADMIN_PASS", "pleaseChange123!")
+
 	viper.AddConfigPath(".")
 	viper.SetConfigName("app")
 	viper.SetConfigType("env")

@@ -11,7 +11,7 @@ import (
 func InitializeServerRoutes(root *gin.RouterGroup) {
 	path := root.Group("/servers")
 
-	path.GET("/", func(c *gin.Context) {
+	path.GET("", func(c *gin.Context) {
 		serverlist := servers.GetAllServers()
 		c.JSON(http.StatusOK, serverlist)
 	})
