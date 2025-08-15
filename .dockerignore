@@ -1,0 +1,4 @@
+.github/
+*.env
+pb_data/
+README.md

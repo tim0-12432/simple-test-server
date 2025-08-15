@@ -17,6 +17,9 @@ WORKDIR /app
 
 COPY --from=builder /app/server ./server
 
+RUN mkdir pb_data \
+    && chown 65532:65532 pb_data
+
 EXPOSE 8080
 
 USER 65532:65532
