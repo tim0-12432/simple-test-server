@@ -5,6 +5,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tim0-12432/simple-test-server/config"
 )
@@ -14,8 +15,21 @@ var Router = gin.Default()
 func InitializeRoutes() {
 	Router.Use(gin.Recovery())
 
-	// corsConfig := cors.DefaultConfig()
-	// Router.Use(cors.New(corsConfig))
+	allowedOrigins := []string{
+		"http://" + config.EnvConfig.Host + ":" + config.EnvConfig.Port,
+	}
+	if config.EnvConfig.AllowedOrigins != nil {
+		allowedOrigins = append(allowedOrigins, config.EnvConfig.AllowedOrigins...)
+	}
+	if config.EnvConfig.Env == "DEV" {
+		allowedOrigins = append(allowedOrigins, "http://localhost:5173")
+	}
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = allowedOrigins
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"}
+	Router.Use(cors.New(corsConfig))
 
 	root := Router.Group("/")
 
@@ -32,6 +46,7 @@ func InitializeApiRoutes(root *gin.RouterGroup) {
 	})
 
 	InitializeServerRoutes(api)
+	InitializeContainerRoutes(api)
 }
 
 func InitializePocketBaseRoutes(root *gin.RouterGroup) {

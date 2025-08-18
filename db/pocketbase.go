@@ -5,11 +5,14 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 	"github.com/tim0-12432/simple-test-server/config"
 )
 
@@ -21,6 +24,18 @@ func InitializeDatabase() {
 
 	if err := db.Bootstrap(); err != nil {
 		log.Fatalf("Pocketbase bootstrap: %v", err)
+	}
+
+	if config.EnvConfig.Env == "DEV" {
+		// register migrate CLI and automigrate (automigrate enabled when using go run)
+		isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
+		migratecmd.MustRegister(db, db.RootCmd, migratecmd.Config{
+			Automigrate: isGoRun,
+		})
+	}
+
+	if err := InitializeCollections(db); err != nil {
+		log.Printf("Bootstrap collections: %v", err)
 	}
 
 	if err := createAdminFromConfig(db); err != nil {

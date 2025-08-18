@@ -1,0 +1,10 @@
+
+services:
+  simple-test-server:
+    image: simple-test-server:latest
+    container_name: simple-test-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped

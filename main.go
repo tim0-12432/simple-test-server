@@ -14,6 +14,8 @@ import (
 	"github.com/tim0-12432/simple-test-server/controllers"
 	"github.com/tim0-12432/simple-test-server/db"
 	"github.com/tim0-12432/simple-test-server/docker"
+	// include migrations so they are registered and executed by PocketBase
+	_ "github.com/tim0-12432/simple-test-server/migrations"
 )
 
 func main() {

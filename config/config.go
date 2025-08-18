@@ -13,13 +13,14 @@ func InitializeEnvConfig() {
 }
 
 type envConfig struct {
-	Host      string `mapstructure:"HOST"`
-	Port      string `mapstructure:"PORT"`
-	Env       string `mapstructure:"ENV"`
-	PbHost    string `mapstructure:"PB_HOST"`
-	PbPort    string `mapstructure:"PB_PORT"`
-	AdminUser string `mapstructure:"ADMIN_USER"`
-	AdminPass string `mapstructure:"ADMIN_PASS"`
+	Host           string   `mapstructure:"HOST"`
+	Port           string   `mapstructure:"PORT"`
+	Env            string   `mapstructure:"ENV"`
+	PbHost         string   `mapstructure:"PB_HOST"`
+	PbPort         string   `mapstructure:"PB_PORT"`
+	AdminUser      string   `mapstructure:"ADMIN_USER"`
+	AdminPass      string   `mapstructure:"ADMIN_PASS"`
+	AllowedOrigins []string `mapstructure:"CORS_ALLOWED_ORIGINS"`
 }
 
 func loadEnvVariables() (config *envConfig) {
@@ -30,6 +31,7 @@ func loadEnvVariables() (config *envConfig) {
 	viper.SetDefault("PB_PORT", "8090")
 	viper.SetDefault("ADMIN_USER", "admin@hosting.test")
 	viper.SetDefault("ADMIN_PASS", "pleaseChange123!")
+	viper.SetDefault("CORS_ALLOWED_ORIGINS", nil)
 
 	viper.AddConfigPath(".")
 	viper.SetConfigName("app")
