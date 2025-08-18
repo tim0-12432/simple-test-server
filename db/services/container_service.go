@@ -41,10 +41,7 @@ func CreateContainer(c *dtos.Container) (string, error) {
 		rec.Set("networks", c.Networks)
 		rec.Set("status", c.Status)
 
-		log.Printf("Creating container record (before save): %+v", rec)
-
 		if err := txApp.SaveWithContext(context.Background(), rec); err != nil {
-			log.Printf("SaveWithContext error: %v", err)
 			return err
 		}
 

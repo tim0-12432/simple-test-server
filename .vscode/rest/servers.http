@@ -1,6 +1,6 @@
 
-# List all existing containers
-GET {{base_url}}/api/v1/containers
+# List all possible servers
+GET {{base_url}}/api/v1/servers
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
 Host: localhost:8000
 Cache-Control: no-cache
@@ -8,12 +8,19 @@ Content-Type: application/json
 Accept: */*
 
 ###
-@container_id = 9d54e66644c5aa1bc6965abfacbf61cf737016a18e0d08246e2bdbfd34b2a43d
 
-# Get details of a specific container
-GET {{base_url}}/api/v1/containers/{{container_id}}
+# Start a new MQTT server
+POST {{base_url}}/api/v1/servers/mqtt
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
 Host: localhost:8000
 Cache-Control: no-cache
 Content-Type: application/json
 Accept: */*
+
+{
+  "name": "",
+  "ports": {
+    "1883": 1663
+  },
+  "env": {}
+}
