@@ -34,7 +34,7 @@ func ToStatus(v any) Status {
 }
 
 type Container struct {
-	ID          string            `json:"id"`
+	ID          string            `json:"container_id"`
 	Name        string            `json:"name"`
 	Image       string            `json:"image"`
 	CreatedAt   string            `json:"created_at"`

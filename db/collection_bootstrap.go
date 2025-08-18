@@ -31,8 +31,8 @@ func EnsureContainersCollection(pb *pocketbase.PocketBase, collectionName string
 	if _, err := pb.App.FindCollectionByNameOrId(collectionName); err == nil {
 		return nil
 	} else if errors.Is(err, sql.ErrNoRows) {
-		log.Printf("%s collection not found, will create it automatically!", collectionName)
-		return err
+		log.Printf("%s collection not found; will defer creation to migrations", collectionName)
+		return nil
 	} else {
 		return err
 	}

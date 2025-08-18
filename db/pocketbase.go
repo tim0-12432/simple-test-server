@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase"
@@ -27,11 +25,10 @@ func InitializeDatabase() {
 	}
 
 	if config.EnvConfig.Env == "DEV" {
-		// register migrate CLI and automigrate (automigrate enabled when using go run)
-		isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
 		migratecmd.MustRegister(db, db.RootCmd, migratecmd.Config{
-			Automigrate: isGoRun,
+			Automigrate: true,
 		})
+		log.Printf("Running in development mode, migrations are enabled: %v", true)
 	}
 
 	if err := InitializeCollections(db); err != nil {

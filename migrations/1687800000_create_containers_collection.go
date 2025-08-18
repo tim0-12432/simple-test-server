@@ -14,7 +14,8 @@ func init() {
 			{
 				"name": "containers",
 				"type": "base",
-				"schema": []map[string]any{
+				"fields": []map[string]any{
+					{"name": "container_id", "type": "text", "required": true, "unique": true, "options": map[string]any{}},
 					{"name": "name", "type": "text", "required": true, "unique": true, "options": map[string]any{}},
 					{"name": "image", "type": "text", "required": false, "unique": false, "options": map[string]any{}},
 					{"name": "created_at", "type": "text", "required": false, "unique": false, "options": map[string]any{}},
@@ -40,5 +41,5 @@ func init() {
 			return err
 		}
 		return app.Delete(c)
-	}, "1687800000_create_containers_collection")
+	}, "1687800000_create_containers_collection.go")
 }
