@@ -16,7 +16,7 @@ type ServerConfiguration struct {
 func StartServer(serverType string, config ServerConfiguration) int {
 	var server servers.ServerDefinition
 	switch serverType {
-	case "mqtt":
+	case "MQTT":
 		server = servers.MqttServer{}
 	default:
 		log.Printf("Unknown server type: %s", serverType)

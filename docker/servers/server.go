@@ -1,5 +1,9 @@
 package servers
 
+import (
+	"fmt"
+)
+
 type ServerDefinition interface {
 	GetImage() string
 	GetName() string
@@ -29,4 +33,23 @@ func GetAllServers() []ServerInformation {
 		serverInfo = append(serverInfo, info)
 	}
 	return serverInfo
+}
+
+func GetServerByType(serverType string) (*ServerInformation, error) {
+	var serverDefinition ServerDefinition
+	switch serverType {
+	case "MQTT":
+		serverDefinition = MqttServer{}
+	default:
+		return nil, fmt.Errorf("unknown server type: %s", serverType)
+	}
+	if serverDefinition == nil {
+		return nil, fmt.Errorf("server type %s not found", serverType)
+	}
+	return &ServerInformation{
+		Name:  serverDefinition.GetName(),
+		Image: serverDefinition.GetImage(),
+		Ports: serverDefinition.GetPorts(),
+		Env:   serverDefinition.GetEnv(),
+	}, nil
 }

@@ -16,6 +16,16 @@ func InitializeServerRoutes(root *gin.RouterGroup) {
 		c.JSON(http.StatusOK, serverlist)
 	})
 
+	path.GET("/:type", func(c *gin.Context) {
+		serverType := c.Param("type")
+		server, err := servers.GetServerByType(serverType)
+		if err != nil {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		c.JSON(http.StatusOK, server)
+	})
+
 	path.POST("/:type", func(c *gin.Context) {
 		var configuration docker.ServerConfiguration
 		if err := c.ShouldBindJSON(&configuration); err != nil {

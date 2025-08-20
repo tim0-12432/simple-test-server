@@ -1,0 +1,12 @@
+
+# Get all MQTT messages for a specific server
+
+@id=56raq062m53o9ho
+
+# ! WEBSOCKET NOT SUPPORTED BY VSCODE REST CLIENT !
+GET ws://localhost:8000/api/v1/protocols/mqtt/{{id}}/messages
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8000
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*

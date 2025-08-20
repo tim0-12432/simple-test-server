@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tim0-12432/simple-test-server/config"
+	"github.com/tim0-12432/simple-test-server/protocols"
 )
 
 var Router = gin.Default()
@@ -41,12 +42,9 @@ func InitializeRoutes() {
 func InitializeApiRoutes(root *gin.RouterGroup) {
 	api := root.Group("/api/v1")
 
-	api.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "pong"})
-	})
-
 	InitializeServerRoutes(api)
 	InitializeContainerRoutes(api)
+	protocols.InitializeProtocolRoutes(api)
 }
 
 func InitializePocketBaseRoutes(root *gin.RouterGroup) {

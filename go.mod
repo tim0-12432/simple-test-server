@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
+	github.com/gorilla/websocket v1.5.3
 	github.com/pocketbase/pocketbase v0.29.2
 	github.com/spf13/viper v1.20.1
 )
