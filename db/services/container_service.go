@@ -40,6 +40,7 @@ func CreateContainer(c *dtos.Container) (string, error) {
 		rec.Set("volumes", c.Volumes)
 		rec.Set("networks", c.Networks)
 		rec.Set("status", c.Status)
+		rec.Set("type", c.Type)
 
 		if err := txApp.SaveWithContext(context.Background(), rec); err != nil {
 			return err
@@ -83,13 +84,14 @@ func ListContainers() ([]*dtos.Container, error) {
 		c.ID = db.ToString(r.Get("container_id"))
 		c.Name = db.ToString(r.Get("name"))
 		c.Image = db.ToString(r.Get("image"))
-		c.CreatedAt = db.ToString(r.Get("created_at"))
+		c.CreatedAt = db.ToIn64(r.Get("created_at"))
 		c.Status = dtos.ToStatus(db.ToString(r.Get("status")))
 
 		c.Environment = db.ToStringMap(r.Get("environment"))
 		c.Volumes = db.ToStringMap(r.Get("volumes"))
 		c.Networks = db.ToStringSlice(r.Get("networks"))
 		c.Ports = db.ToIntMap(r.Get("ports"))
+		c.Type = db.ToString(r.Get("type"))
 
 		out = append(out, c)
 	}
@@ -147,13 +149,14 @@ func GetContainer(id string) (*dtos.Container, error) {
 	c.ID = db.ToString(rec.Get("container_id"))
 	c.Name = db.ToString(rec.Get("name"))
 	c.Image = db.ToString(rec.Get("image"))
-	c.CreatedAt = db.ToString(rec.Get("created_at"))
+	c.CreatedAt = db.ToIn64(rec.Get("created_at"))
 	c.Status = dtos.ToStatus(db.ToString(rec.Get("status")))
 
 	c.Environment = db.ToStringMap(rec.Get("environment"))
 	c.Volumes = db.ToStringMap(rec.Get("volumes"))
 	c.Networks = db.ToStringSlice(rec.Get("networks"))
 	c.Ports = db.ToIntMap(rec.Get("ports"))
+	c.Type = db.ToString(rec.Get("type"))
 
 	return c, nil
 }
@@ -191,6 +194,7 @@ func UpdateContainer(id string, updates *dtos.Container) error {
 		rec.Set("volumes", updates.Volumes)
 		rec.Set("networks", updates.Networks)
 		rec.Set("status", updates.Status)
+		rec.Set("type", updates.Type)
 
 		if err := txApp.SaveWithContext(context.Background(), rec); err != nil {
 			log.Printf("Update SaveWithContext error for id=%s: %v", id, err)

@@ -37,12 +37,13 @@ type Container struct {
 	ID          string            `json:"container_id"`
 	Name        string            `json:"name"`
 	Image       string            `json:"image"`
-	CreatedAt   string            `json:"created_at"`
+	CreatedAt   int64             `json:"created_at"`
 	Environment map[string]string `json:"environment"`
 	Ports       map[int]int       `json:"ports"`
 	Volumes     map[string]string `json:"volumes"`
 	Networks    []string          `json:"networks"`
 	Status      Status            `json:"status"`
+	Type        string            `json:"type"`
 }
 
 func (c *Container) GetID() string {
@@ -57,7 +58,7 @@ func (c *Container) GetImage() string {
 	return c.Image
 }
 
-func (c *Container) GetCreatedAt() string {
+func (c *Container) GetCreatedAt() int64 {
 	return c.CreatedAt
 }
 
@@ -79,4 +80,8 @@ func (c *Container) GetNetworks() []string {
 
 func (c *Container) GetStatus() Status {
 	return c.Status
+}
+
+func (c *Container) GetType() string {
+	return c.Type
 }

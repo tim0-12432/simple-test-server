@@ -23,7 +23,7 @@ func StartServer(serverType string, config ServerConfiguration) int {
 		return http.StatusBadRequest
 	}
 
-	if err := RunContainer(config, server.GetImage(), server.GetName(), server.GetPorts(), server.GetEnv()); err != nil {
+	if err := RunContainer(config, serverType, server.GetImage(), server.GetName(), server.GetPorts(), server.GetEnv()); err != nil {
 		log.Fatalf("Failed to start server %s: %v", serverType, err)
 		return http.StatusInternalServerError
 	}

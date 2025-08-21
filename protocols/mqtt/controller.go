@@ -1,6 +1,7 @@
 package mqtt
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,7 @@ func InitializeMqttProtocolRoutes(root *gin.RouterGroup) {
 
 	mqtt.GET("/:id/messages", func(c *gin.Context) {
 		serverID := c.Param("id")
-		_, err := services.GetContainer(serverID)
+		container, err := services.GetContainer(serverID)
 		if err != nil {
 			c.Status(http.StatusNotFound)
 			return
@@ -48,7 +49,7 @@ func InitializeMqttProtocolRoutes(root *gin.RouterGroup) {
 		}
 		defer conn.Close()
 
-		var url = "localhost:8883" // Replace with actual MQTT broker URL
+		var url = "localhost:" + fmt.Sprint(container.Ports[1883])
 
 		subscribeToMqtt(url, func(message []byte) {
 			err := conn.WriteMessage(websocket.TextMessage, message)

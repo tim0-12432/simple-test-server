@@ -16,7 +16,7 @@ var DockerClient interface{}
 
 var id = 0
 
-func RunContainer(config ServerConfiguration, image string, name string, ports []int, env map[string]string) error {
+func RunContainer(config ServerConfiguration, cType string, image string, name string, ports []int, env map[string]string) error {
 
 	var allPorts = map[int]int{}
 	var allEnv = map[string]string{}
@@ -64,11 +64,13 @@ func RunContainer(config ServerConfiguration, image string, name string, ports [
 		ID:          strings.TrimSpace(string(out)),
 		Name:        finalName,
 		Image:       image,
-		CreatedAt:   time.Now().GoString(),
+		CreatedAt:   time.Now().UnixMilli(),
 		Environment: allEnv,
 		Ports:       allPorts,
 		Volumes:     map[string]string{},
 		Networks:    []string{"host"},
+		Status:      dtos.Running,
+		Type:        cType,
 	})
 
 	log.Printf("Started container name=%s image=%s output=%s", name, image, strings.TrimSpace(string(out)))

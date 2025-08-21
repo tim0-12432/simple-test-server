@@ -24,6 +24,7 @@ func init() {
 					{"name": "volumes", "type": "json", "required": false, "unique": false, "options": map[string]any{}},
 					{"name": "networks", "type": "json", "required": false, "unique": false, "options": map[string]any{}},
 					{"name": "status", "type": "text", "required": false, "unique": false, "options": map[string]any{}},
+					{"name": "type", "type": "text", "required": false, "unique": false, "options": map[string]any{}},
 				},
 			},
 		}

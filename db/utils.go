@@ -24,6 +24,28 @@ func ToString(v any) string {
 	}
 }
 
+func ToIn64(v any) int64 {
+	if v == nil {
+		return 0
+	}
+	switch t := v.(type) {
+	case int64:
+		return t
+	case int:
+		return int64(t)
+	case string:
+		i, err := strconv.ParseInt(t, 10, 64)
+		if err != nil {
+			return 0
+		}
+		return i
+	default:
+		bs, _ := json.Marshal(v)
+		i, _ := strconv.ParseInt(string(bs), 10, 64)
+		return i
+	}
+}
+
 func ToStringMap(v any) map[string]string {
 	out := map[string]string{}
 	if v == nil {
