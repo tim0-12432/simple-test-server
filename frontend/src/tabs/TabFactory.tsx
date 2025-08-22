@@ -9,14 +9,14 @@ export type GeneralTabInformation = {
     type: TabType;
 }
 
-const TabFactory = (type: TabType, params: GeneralTabInformation) => {
+const TabFactory = (type: TabType, reloadTabs: () => void, params: GeneralTabInformation) => {
     let component = null;
     switch (type) {
         case 'MQTT':
             component = <MqttTab {...params} />;
             break;
         case 'create_new':
-            component = <CreateNewTab />;
+            component = <CreateNewTab reloadTabs={reloadTabs} />;
             break;
         default:
             component = (

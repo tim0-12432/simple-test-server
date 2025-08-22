@@ -3,6 +3,7 @@ package docker
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/tim0-12432/simple-test-server/docker/servers"
 )
@@ -21,6 +22,10 @@ func StartServer(serverType string, config ServerConfiguration) int {
 	default:
 		log.Printf("Unknown server type: %s", serverType)
 		return http.StatusBadRequest
+	}
+
+	if strings.Contains(server.GetImage(), "simple-test-server-custom-") {
+		BuildCustomDockerImage(server.GetImage())
 	}
 
 	if err := RunContainer(config, serverType, server.GetImage(), server.GetName(), server.GetPorts(), server.GetEnv()); err != nil {

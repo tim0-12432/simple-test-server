@@ -15,7 +15,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleCheckBigIcon, OctagonAlertIcon } from "lucide-react";
 
 
-const CreateNewTab = () => {
+type CreateNewTabProps = {
+    reloadTabs: () => void;
+}
+
+const CreateNewTab = (props: CreateNewTabProps) => {
     const [serverType, setServerType] = useState<ServerType>(serverTypes[0]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -82,6 +86,7 @@ const CreateNewTab = () => {
             }) as { message: string };
             setSuccess(message);
             setLoading(false);
+            props.reloadTabs();
         })();
     }
 

@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import type { GeneralTabInformation } from "./TabFactory";
 import { websocketConnect } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { OctagonAlertIcon, Container, FolderTree, ScrollText } from "lucide-react";
+import { OctagonAlertIcon, FolderTree, ScrollText } from "lucide-react";
 import type MqttData from "@/types/MqttData";
 import TopicTree from "@/components/topic-tree";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
+import TabAccordion from "@/components/tab-accordion";
+import ServerInformation from "@/components/server-information";
 
 type MqttTabProps = GeneralTabInformation & {
 
@@ -46,40 +48,16 @@ const MqttTab = (props: MqttTabProps) => {
             <Accordion type="multiple"
                        className="w-full mx-2 space-y-4"
                        defaultValue={['topic_tree']}>
-                <AccordionItem value='container_info'
-                className="w-full px-4 border border-border rounded-lg">
-                    <AccordionTrigger>
-                        <div className="flex items-start gap-3">
-                            <Container />
-                            <span>Container Information</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent></AccordionContent>
-                </AccordionItem>
-                <AccordionItem value='topic_tree'
-                className="w-full px-4 border border-border rounded-lg">
-                    <AccordionTrigger>
-                        <div className="flex items-start gap-3">
-                            <FolderTree />
-                            <span>Topic Tree</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <TopicTree messages={messages} />
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value='messages'
-                className="w-full px-4 border border-border rounded-lg">
-                    <AccordionTrigger>
-                        <div className="flex items-start gap-3">
-                            <ScrollText />
-                            <span>Message Log</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        
-                    </AccordionContent>
-                </AccordionItem>
+                <ServerInformation id={props.id} />
+                <TabAccordion id='topic_tree'
+                              icon={<FolderTree />}
+                              title="Topic Tree">
+                    <TopicTree messages={messages} />
+                </TabAccordion>
+                <TabAccordion id='messages'
+                              icon={<ScrollText />}
+                              title="Message Log">
+                </TabAccordion>
             </Accordion>
         </div>
     );

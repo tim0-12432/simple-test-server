@@ -3,7 +3,7 @@ package servers
 type MqttServer struct{}
 
 func (s MqttServer) GetImage() string {
-	return "eclipse-mosquitto:latest"
+	return "simple-test-server-custom-mqtt:latest"
 }
 
 func (s MqttServer) GetName() string {

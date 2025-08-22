@@ -21,7 +21,6 @@ func subscribeToMqtt(url string, handler func(message []byte)) error {
 			Payload: string(msg.Payload()),
 		}
 
-		// Marshal to JSON
 		jsonBytes, err := json.Marshal(data)
 		if err != nil {
 			log.Printf("Error marshaling MQTT message: %v", err)

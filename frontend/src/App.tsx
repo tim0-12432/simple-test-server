@@ -55,7 +55,7 @@ function App() {
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="rounded-none bg-background h-full data-[state=active]:shadow-none border border-transparent border-b-border data-[state=active]:border-border data-[state=active]:border-b-background -mb-[2px] rounded-t"
+                className="rounded-none bg-background h-full data-[state=active]:shadow-none border border-transparent border-b-border data-[state=active]:border-border data-[state=active]:border-b-background -mb-[2px] rounded-t cursor-pointer"
               >
                 {getIconForTabType(tab.type)} <p className="text-[13px]">{tab.name}</p>
               </TabsTrigger>
@@ -71,7 +71,7 @@ function App() {
           <TabsContent key={tab.id} value={tab.id} className='h-auto overflow-y-auto flex flex-col items-center'>
             <div className='w-full p-4'>
               {
-                TabFactory(tab.type, {
+                TabFactory(tab.type, loadTabs, {
                   id: tab.id,
                   type: tab.type
                 })
