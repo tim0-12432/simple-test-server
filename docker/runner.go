@@ -18,7 +18,15 @@ func StartServer(serverType string, config ServerConfiguration) int {
 	var server servers.ServerDefinition
 	switch serverType {
 	case "MQTT":
-		server = servers.MqttServer{}
+		server = servers.FtpServer{}
+	case "WEB":
+		server = servers.WebServer{}
+	case "FTP":
+		server = servers.FtpServer{}
+	case "SMB":
+		server = servers.SmbServer{}
+	case "MAIL":
+		server = servers.MailServer{}
 	default:
 		log.Printf("Unknown server type: %s", serverType)
 		return http.StatusBadRequest

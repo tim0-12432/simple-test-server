@@ -16,6 +16,7 @@ RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
 
 COPY --from=builder /app/server ./server
+COPY ./custom_images ./custom_images
 
 RUN mkdir pb_data \
     && chown 65532:65532 pb_data

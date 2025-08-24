@@ -20,7 +20,7 @@ type ServerInformation struct {
 
 func GetAllServers() []ServerInformation {
 	servers := []ServerDefinition{
-		MqttServer{},
+		FtpServer{},
 	}
 	var serverInfo []ServerInformation
 	for _, server := range servers {
@@ -39,7 +39,15 @@ func GetServerByType(serverType string) (*ServerInformation, error) {
 	var serverDefinition ServerDefinition
 	switch serverType {
 	case "MQTT":
-		serverDefinition = MqttServer{}
+		serverDefinition = FtpServer{}
+	case "WEB":
+		serverDefinition = WebServer{}
+	case "FTP":
+		serverDefinition = FtpServer{}
+	case "SMB":
+		serverDefinition = SmbServer{}
+	case "MAIL":
+		serverDefinition = MailServer{}
 	default:
 		return nil, fmt.Errorf("unknown server type: %s", serverType)
 	}

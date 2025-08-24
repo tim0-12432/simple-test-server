@@ -81,7 +81,7 @@ const CreateNewTab = (props: CreateNewTabProps) => {
                 }
                 return acc;
             }, {} as Record<string, string>);
-            const {message} = await request("POST", `/servers/${serverType}`, {
+            const {message} = await request("POST", `/servers/${serverType.toUpperCase()}`, {
                 name, image, ports, env
             }) as { message: string };
             setSuccess(message);
