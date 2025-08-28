@@ -43,7 +43,7 @@ func GetServerByType(serverType string) (*ServerInformation, error) {
 	var serverDefinition ServerDefinition
 	switch serverType {
 	case "MQTT":
-		serverDefinition = FtpServer{}
+		serverDefinition = MqttServer{}
 	case "WEB":
 		serverDefinition = WebServer{}
 	case "FTP":

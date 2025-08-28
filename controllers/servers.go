@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/tim0-12432/simple-test-server/docker"
 	"github.com/tim0-12432/simple-test-server/docker/servers"
 )
@@ -33,11 +34,11 @@ func InitializeServerRoutes(root *gin.RouterGroup) {
 			return
 		}
 		serverType := c.Param("type")
-		status := docker.StartServer(serverType, configuration)
-		if status != http.StatusOK {
-			c.JSON(status, gin.H{"error": "Failed to start server"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "Server started successfully"})
+		reqId := uuid.New().String()
+		go func() {
+			docker.StartServerWithProgress(reqId, serverType, configuration)
+		}()
+
+		c.JSON(http.StatusAccepted, gin.H{"reqId": reqId})
 	})
 }

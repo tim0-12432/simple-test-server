@@ -13,7 +13,6 @@ import (
 	"github.com/tim0-12432/simple-test-server/config"
 	"github.com/tim0-12432/simple-test-server/controllers"
 	"github.com/tim0-12432/simple-test-server/db"
-	"github.com/tim0-12432/simple-test-server/db/services"
 	"github.com/tim0-12432/simple-test-server/docker"
 
 	// include migrations so they are registered and executed by PocketBase
@@ -32,8 +31,6 @@ func main() {
 	db.InitializeDatabase()
 
 	controllers.InitializeRoutes()
-
-	services.DiscardAllOldContainers()
 
 	srv := &http.Server{
 		Addr:    config.EnvConfig.Host + ":" + config.EnvConfig.Port,

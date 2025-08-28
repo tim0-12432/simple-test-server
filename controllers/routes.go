@@ -44,6 +44,7 @@ func InitializeApiRoutes(root *gin.RouterGroup) {
 
 	InitializeServerRoutes(api)
 	InitializeContainerRoutes(api)
+	InitializeProgressRoutes(api)
 	protocols.InitializeProtocolRoutes(api)
 }
 

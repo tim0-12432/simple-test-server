@@ -9,11 +9,15 @@ import { useState, useRef, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { getIconForTabType } from "@/lib/tabs";
-import request from "@/lib/api";
+import request, { API_URL } from "@/lib/api";
 import type { ServerInformation } from "@/types/Server";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleCheckBigIcon, OctagonAlertIcon } from "lucide-react";
 
+type LoadingState = {
+    message: string;
+    percent: number;
+}
 
 type CreateNewTabProps = {
     reloadTabs: () => void;
@@ -22,6 +26,7 @@ type CreateNewTabProps = {
 const CreateNewTab = (props: CreateNewTabProps) => {
     const [serverType, setServerType] = useState<ServerType>(serverTypes[0]);
     const [loading, setLoading] = useState(false);
+    const [loadingState, setLoadingState] = useState<LoadingState | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const nameRef = useRef<HTMLInputElement>(null);
@@ -68,6 +73,13 @@ const CreateNewTab = (props: CreateNewTabProps) => {
         setError(null);
         setSuccess(null);
         (async () => {
+            function closeEventSource(eventSource: EventSource) {
+                eventSource.close();
+                setSuccess("Server created successfully.");
+                setLoading(false);
+                props.reloadTabs();
+            }
+
             const name = nameRef.current?.value;
             const image = imageRef.current?.value;
             const ports = portsRef.current?.value.split("\n").map(p => {
@@ -81,19 +93,27 @@ const CreateNewTab = (props: CreateNewTabProps) => {
                 }
                 return acc;
             }, {} as Record<string, string>);
-            const {message} = await request("POST", `/servers/${serverType.toUpperCase()}`, {
+            const {reqId} = await request("POST", `/servers/${serverType.toUpperCase()}`, {
                 name, image, ports, env
-            }) as { message: string };
-            setSuccess(message);
-            setLoading(false);
-            props.reloadTabs();
+            }) as { reqId: string };
+
+            const eventSource = new EventSource(`${API_URL}/servers/progress/${reqId}`);
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data) as {percent: number; message: string; error: boolean};
+                setLoadingState(data);
+                if (data.percent >= 100 || data.error) {
+                    closeEventSource(eventSource);
+                }
+            }
+            eventSource.onerror = () => closeEventSource(eventSource);
         })();
     }
 
+    console.log(loadingState);
     return (
         <div className="w-full h-full flex flex-col items-center">
             {
-                <Progress active={loading} className="w-full mb-2 h-2" />
+                <Progress active={loading} value={loadingState?.percent} className="w-full mb-2 h-2" />
             }
             {
                 error && (
@@ -172,7 +192,7 @@ const CreateNewTab = (props: CreateNewTabProps) => {
                             </p>
                         </div>
                         <Button onClick={handleSubmit} disabled={loading} className="w-full">
-                            Create {loading && <Spinner variant="circle" />}
+                            {loading ? <>{loadingState?.message} <Spinner variant="circle" /></> : "Create"}
                         </Button>
                     </div>
                 )
