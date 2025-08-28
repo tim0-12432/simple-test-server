@@ -16,6 +16,33 @@ var DockerClient interface{}
 
 var id = 0
 
+func CheckAndPullImage(image string) error {
+	log.Printf("Running Docker command: docker images -q %s", image)
+	cmd := exec.Command("docker", "images", "-q", image)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("docker images failed: %v - %s", err, strings.TrimSpace(string(out)))
+	}
+
+	if strings.TrimSpace(string(out)) != "" {
+		log.Printf("Docker image %s is already available locally", image)
+		return nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
+	defer cancel()
+
+	log.Printf("Running Docker command: docker pull %s", image)
+	cmdPull := exec.CommandContext(ctx, "docker", "pull", image)
+	pullOut, err := cmdPull.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("docker pull failed: %v - %s", err, strings.TrimSpace(string(pullOut)))
+	}
+
+	log.Printf("Successfully pulled Docker image %s: %s", image, strings.TrimSpace(string(pullOut)))
+	return nil
+}
+
 func RunContainer(config ServerConfiguration, cType string, image string, name string, ports []int, env map[string]string) error {
 
 	var allPorts = map[int]int{}

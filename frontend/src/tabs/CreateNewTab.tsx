@@ -35,7 +35,7 @@ const CreateNewTab = (props: CreateNewTabProps) => {
         setSuccess(null);
         (async () => {
             try {
-                const server: ServerInformation = await request("GET", `/servers/${serverType}`);
+                const server: ServerInformation = await request("GET", `/servers/${serverType.toUpperCase()}`);
                 if (server) {
                     if (nameRef.current) {
                         nameRef.current.value = "";

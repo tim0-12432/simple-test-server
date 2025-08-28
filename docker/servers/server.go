@@ -20,7 +20,11 @@ type ServerInformation struct {
 
 func GetAllServers() []ServerInformation {
 	servers := []ServerDefinition{
+		MqttServer{},
+		WebServer{},
 		FtpServer{},
+		SmbServer{},
+		MailServer{},
 	}
 	var serverInfo []ServerInformation
 	for _, server := range servers {

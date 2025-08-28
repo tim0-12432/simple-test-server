@@ -213,3 +213,20 @@ func UpdateContainerStatus(id string, status dtos.Status) error {
 	container.Status = status
 	return UpdateContainer(id, container)
 }
+
+func DiscardAllOldContainers() {
+	containers, err := ListContainers()
+	if err != nil {
+		log.Printf("Error listing containers: %v", err)
+		return
+	}
+	for _, c := range containers {
+		if c.Status != dtos.Running {
+			log.Printf("Discarding old container id=%s name=%ss", c.ID, c.Name)
+			c.Status = dtos.Discarded
+			if err := UpdateContainer(c.ID, c); err != nil {
+				log.Printf("Error discarding container id=%s: %v", c.ID, err)
+			}
+		}
+	}
+}

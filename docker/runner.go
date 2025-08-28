@@ -34,6 +34,8 @@ func StartServer(serverType string, config ServerConfiguration) int {
 
 	if strings.Contains(server.GetImage(), "simple-test-server-custom-") {
 		BuildCustomDockerImage(server.GetImage())
+	} else {
+		CheckAndPullImage(server.GetImage())
 	}
 
 	if err := RunContainer(config, serverType, server.GetImage(), server.GetName(), server.GetPorts(), server.GetEnv()); err != nil {
