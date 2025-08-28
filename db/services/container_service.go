@@ -99,6 +99,20 @@ func ListContainers() ([]*dtos.Container, error) {
 	return out, nil
 }
 
+func ListRunningContainers() ([]*dtos.Container, error) {
+	all, err := ListContainers()
+	if err != nil {
+		return nil, err
+	}
+	running := make([]*dtos.Container, 0)
+	for _, c := range all {
+		if c.Status == dtos.Running {
+			running = append(running, c)
+		}
+	}
+	return running, nil
+}
+
 func GetContainerIdByDockerId(id string) (string, error) {
 	if db.DB == nil {
 		return "", errors.New("pocketbase not initialized")

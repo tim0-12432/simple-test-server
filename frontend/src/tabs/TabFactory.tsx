@@ -7,16 +7,17 @@ import { TriangleAlertIcon } from "lucide-react";
 export type GeneralTabInformation = {
     id: string;
     type: TabType;
+    reloadTabs: () => void;
 }
 
-const TabFactory = (type: TabType, reloadTabs: () => void, params: GeneralTabInformation) => {
+const TabFactory = (type: TabType, params: GeneralTabInformation) => {
     let component = null;
     switch (type) {
         case 'MQTT':
             component = <MqttTab {...params} />;
             break;
         case 'create_new':
-            component = <CreateNewTab reloadTabs={reloadTabs} />;
+            component = <CreateNewTab reloadTabs={params.reloadTabs} />;
             break;
         default:
             component = (

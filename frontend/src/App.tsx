@@ -48,7 +48,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Tabs defaultValue={tabs[0].id} className="w-full h-screen">
+      <Tabs defaultValue={tabs[0].id} className="w-full h-screen" key={tabs.length}>
         <nav>
           <TabsList className="w-full p-0 mt-2 bg-background justify-start border-b rounded-none">
             {tabs.map((tab) => (
@@ -71,9 +71,10 @@ function App() {
           <TabsContent key={tab.id} value={tab.id} className='h-auto overflow-y-auto flex flex-col items-center'>
             <div className='w-full p-4'>
               {
-                TabFactory(tab.type, loadTabs, {
+                TabFactory(tab.type, {
                   id: tab.id,
-                  type: tab.type
+                  type: tab.type,
+                  reloadTabs: loadTabs
                 })
               }
             </div>

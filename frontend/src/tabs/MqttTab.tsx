@@ -48,7 +48,7 @@ const MqttTab = (props: MqttTabProps) => {
             <Accordion type="multiple"
                        className="w-full mx-2 space-y-4"
                        defaultValue={['topic_tree']}>
-                <ServerInformation id={props.id} />
+                <ServerInformation id={props.id} reloadTabs={props.reloadTabs} />
                 <TabAccordion id='topic_tree'
                               icon={<FolderTree />}
                               title="Topic Tree">

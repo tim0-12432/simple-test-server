@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 
 type ServerInformationProps = {
     id: string;
+    reloadTabs: () => void;
 }
 
 const ServerInformation = (props: ServerInformationProps) => {
@@ -36,6 +37,15 @@ const ServerInformation = (props: ServerInformationProps) => {
 
     function stopServer() {
         setStopping(true);
+        (async () => {
+            try {
+                await request("DELETE", `/containers/${props.id}`);
+            } catch (err) {
+                console.error(`Error stopping container: ${err instanceof Error ? err.message : "Unknown error"}`);
+            } finally {
+                props.reloadTabs();
+            }
+        })();
     }
 
     return (

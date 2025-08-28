@@ -133,3 +133,15 @@ func StopAllContainers() error {
 	log.Printf("Removed containers: %s", strings.TrimSpace(string(rmOut)))
 	return nil
 }
+
+func StopContainer(containerId string) error {
+	log.Printf("Running Docker command: docker rm -f %s", containerId)
+	cmdRm := exec.Command("docker", "rm", "-f", containerId)
+	rmOut, err := cmdRm.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("docker rm failed: %v - %s", err, strings.TrimSpace(string(rmOut)))
+	}
+
+	services.UpdateContainerStatus(containerId, dtos.Discarded)
+	return nil
+}
