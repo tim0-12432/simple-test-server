@@ -22,6 +22,10 @@
 
 ## Usage
 
+```bash
+docker run -it --rm --name simple-test-server -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/tim0-12432/simple-test-server-2:latest
+```
+
 ## Development
 
 ## Contributing

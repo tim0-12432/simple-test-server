@@ -40,7 +40,11 @@ func loadEnvVariables() (config *envConfig) {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading .env file, %s", err)
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			log.Printf("No .env file found, using default values and environment variables.")
+		} else {
+			log.Fatalf("Error reading .env file, %s", err)
+		}
 	}
 
 	if err := viper.Unmarshal(&config); err != nil {

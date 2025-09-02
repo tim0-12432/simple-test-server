@@ -15,6 +15,8 @@ FROM alpine:3.22
 RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
 
+RUN apk add --no-cache docker-cli
+
 COPY --from=builder /app/server ./server
 COPY ./custom_images ./custom_images
 
