@@ -3,20 +3,20 @@ import { Database, FolderOpen, Globe, Mail, CirclePlus } from "lucide-react"
 
 export const tabTypes = [...serverTypes, 'create_new'] as const;
 
-export function getIconForTabType(type: typeof tabTypes[number]) {
+export function getIconForTabType(type: typeof tabTypes[number], params?: any) {
     switch (type) {
         case 'MQTT':
-            return <Database />;
+            return <Database {...params} />;
         case 'FTP':
-            return <FolderOpen />;
-        case 'Web':
-            return <Globe />;
+            return <FolderOpen {...params} />;
+        case 'WEB':
+            return <Globe {...params} />;
         case 'SMB':
-            return <FolderOpen />;
-        case 'Mail':
-            return <Mail />;
+            return <FolderOpen {...params} />;
+        case 'MAIL':
+            return <Mail {...params} />;
         case 'create_new':
-            return <CirclePlus />;
+            return <CirclePlus {...params} />;
     }
 }
 

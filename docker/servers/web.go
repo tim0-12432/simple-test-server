@@ -3,7 +3,7 @@ package servers
 type WebServer struct{}
 
 func (s WebServer) GetImage() string {
-	return "nginx:latest"
+	return "simple-test-server-custom-nginx:latest"
 }
 
 func (s WebServer) GetName() string {

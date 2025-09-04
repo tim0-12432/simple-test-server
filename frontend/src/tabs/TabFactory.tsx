@@ -3,6 +3,7 @@ import type TabType from "@/types/Tab";
 import MqttTab from "./MqttTab";
 import CreateNewTab from "./CreateNewTab";
 import { TriangleAlertIcon } from "lucide-react";
+import WebTab from "./WebTab";
 
 export type GeneralTabInformation = {
     id: string;
@@ -15,6 +16,9 @@ const TabFactory = (type: TabType, params: GeneralTabInformation) => {
     switch (type) {
         case 'MQTT':
             component = <MqttTab {...params} />;
+            break;
+        case 'WEB':
+            component = <WebTab {...params} />;
             break;
         case 'create_new':
             component = <CreateNewTab reloadTabs={params.reloadTabs} />;

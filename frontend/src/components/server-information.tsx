@@ -5,11 +5,13 @@ import type { Container } from "@/types/Container";
 import { useEffect, useState } from "react";
 import { Spinner } from "./ui/kibo-ui/spinner";
 import { Button } from "./ui/button";
+import { getIconForTabType } from "@/lib/tabs";
 
 
 type ServerInformationProps = {
     id: string;
     reloadTabs: () => void;
+    additionalControls?: React.ReactNode;
 }
 
 const ServerInformation = (props: ServerInformationProps) => {
@@ -56,9 +58,9 @@ const ServerInformation = (props: ServerInformationProps) => {
                 {
                     info && (
                         <div className="flex">
-                            <div className="flex-grow">
+                            <div className="flex-grow flex flex-col">
                                 <label htmlFor="type" className="text-sm font-normal text-muted-foreground">Type:</label>
-                                <p id="type" className="font-semibold mb-2">{info.type}</p>
+                                <p id="type" className="font-semibold mb-2 inline-flex gap-2 items-center">{info.type} {getIconForTabType(info.type, {class: 'size-4'})}</p>
                                 <label htmlFor="id" className="text-sm font-normal text-muted-foreground">ID:</label>
                                 <p id="id" className="font-semibold mb-2">{info.container_id}</p>
                                 <label htmlFor="creation" className="text-sm font-normal text-muted-foreground">Created at:</label>
@@ -66,8 +68,9 @@ const ServerInformation = (props: ServerInformationProps) => {
                                 <label htmlFor="image" className="text-sm font-normal text-muted-foreground">Docker image:</label>
                                 <p id="image" className="font-semibold">{info.image}</p>
                             </div>
-                            <div>
+                            <div className="flex flex-col gap-2">
                                 <Button variant={"outline"} className="cursor-pointer" onClick={stopServer} disabled={stopping}>{stopping ? <>Stopping... <Spinner variant="circle" /></> : "Stop server"}</Button>
+                                {props.additionalControls}
                             </div>
                         </div>
                     )
