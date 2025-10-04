@@ -1,26 +1,95 @@
-Build / Lint / Test
-- Build Go backend: `go build ./...` (works from repo root)
-- Run backend tests: `go test ./...`
-- Run a single Go test (package): `go test ./pkg/progress -run TestName`
-- Run a single test by file: `go test ./controllers -run TestName` (package-level run)
-- Frontend dev: `cd frontend && npm run dev`
-- Frontend build: `cd frontend && npm run build`
-- Frontend lint: `cd frontend && npm run lint`
+# Project Rules (Simple Test Server)
 
-Code Style Guidelines
-- Formatting: use `gofmt`/`go fmt` for Go and `gofumpt` when available; run `go vet` before commits.
-- Imports: keep standard library imports separate from third-party; use `goimports` to auto-group and remove unused imports.
-- Types: prefer concrete types in package APIs; expose only necessary fields and methods (use unexported fields where appropriate).
-- Naming: use mixedCase for local vars, PascalCase for exported identifiers, and short receiver names (e.g., `s *Server`).
-- Errors: return wrapped errors using `fmt.Errorf("...: %w", err)` or `errors.Join`/`errors.Is` where appropriate; check and handle errors explicitly.
-- Context: accept `context.Context` as first arg for long-running or I/O functions.
-- Logging: keep logs in controllers or entrypoints; avoid global mutable loggers. Prefer structured logs.
-- Tests: keep tests small and deterministic; use table-driven tests and `t.Parallel()` when safe.
-- Concurrency: prefer channels and context cancellation; avoid data races — use `go test -race` when adding concurrency.
+## Description
 
-Cursor/Copilot Rules
-- No `.cursor` or Copilot instruction files were found in this repository.
+Simple Test Server is an application made for software testers and developers.
+It should make it really easy to spin up a test server providing a specified protocol quickly.
+This is done by starting a Docker container providing that specified connectivity via a web application.
+There the configuration of that container to start should be set up, the status observed and communication checked.
 
-Notes
-- Do not modify generated PocketBase or frontend build artifacts. Commit only source changes.
-- When introducing new packages, add unit tests and update `go.mod` only via `go get` or `go mod tidy`.
+Examples:
+
+1. If you want to test some MQTT connectivity, you should be able to start a small MQTT broker in the webapp, which you can connect to easily. Then you should be able to observe published topics and messages. In the end you could stop the running container.
+2. To test some REST requests, you could start a Webserver, upload some resources, that you can request then.
+3. For testing mail sending, you should be able to start a small mail server. The application to test could send mails over it, that should be listed then in the webapp.
+
+## Tech Stack
+
+### Backend
+
+- Language: Go v1.25
+- API Framework: Gin v1.10
+- Configuration parsing: Viper v1.20
+
+### Frontend
+
+- is served by backend
+- Framework: React v19
+- Language: Typescript v5
+- Package manager: Bun v1.2
+- Build tool: Vite v7
+- Components: Shadcn UI
+- Styling: TailwindCSS v4
+
+### Database
+
+- Pocketbase NoSQL
+- started from inside Go backend
+- reachable over path `/pb/`
+
+## Folder Structure
+
+### Overall
+
+- .github/: GitHub Automations/Workflows
+- .vscode/: Configuration files for IDE + REST test files
+- ... Backend folders
+- custom_images/: Dockerfiles and configuration for custom Docker images
+- frontend/: Frontend stuff
+- migrations/: Database migration files
+- pb_data/: Database data
+- app.env: Environment variables
+- docker-compose.yml: Docker compose for deployment
+- Dockerfile: Definition for Docker image 
+
+### Backend
+
+- config/: Configuration parsing from environment and default handling
+- controllers/: REST API definitions calling the different services
+- db/
+  - dtos/: Database entities
+  - services/: Services managing the different database collections of the DTOs
+  - collection_bootstrap.go: Sets up the collections if database started freshly
+  - pocketbase.go: Manages the connection to the database
+  - utils.go: Some helper functions for database interaction
+- docker/
+  - servers/: Definitions for the different test/development servers
+  - builder.go: Builds custom images if they don't exist yet
+  - manager.go: Manages whole interaction with Docker
+  - runner.go: Starts new Docker containers
+- progress/hub.go: Registers eventsources for enabling progress tracking
+- protocols/: Section for test server type specific logic
+  - routes.go: Registers test server type specific APIs
+  - mqtt/ or web/ etc.: Controller and services for this specific test server type
+- go.mod: Go project definition and dependencies
+- main.go: Application entrypoint starting the server
+
+### Frontend
+
+- frontend/
+  - dist/: Build frontend files shipped by Go server
+  - src/
+    - assets/: All images, fonts whatever to be included in the webapp
+    - components/: Components collected from different shadcn libraries e.g. KiboUi, but some customized or self implemented
+    - lib/: Components and hooks used in different places over the webapp
+    - tabs/: Factory for the different tab pages for each test server type
+    - types/: Typescript types for DTOs
+    - App.tsx
+    - index.css
+    - main.tsx
+  - components.json: Shadcn configuration
+  - eslint.config.js
+  - index.html
+  - package.json
+  - tsconfig.json
+  - vite.config.ts

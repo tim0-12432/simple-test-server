@@ -34,7 +34,7 @@ func StartServerWithProgress(reqId string, serverType string, config ServerConfi
 		server = servers.MailServer{}
 	default:
 		msg := fmt.Sprintf("Unknown server type: %s", serverType)
-		log.Printf(msg)
+		log.Print(msg)
 		progress.Default.Send(reqId, progress.Event{Percent: 100, Message: msg, Error: true})
 	}
 

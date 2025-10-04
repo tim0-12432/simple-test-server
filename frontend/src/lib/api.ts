@@ -41,4 +41,47 @@ export function websocketConnect<T>(url: string, onMessage: (msg: T) => void, on
     };
 }
 
+export type UploadResponse = {
+    url: string;
+}
+
+export function uploadFile(serverId: string, file: File, serverType: string, onProgress?: (pct: number) => void): Promise<UploadResponse> {
+    const url = `${API_URL}/protocols/${serverType}/${encodeURIComponent(serverId)}/upload`;
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        resolve(data as UploadResponse);
+                    } catch (e) {
+                        reject(e);
+                    }
+                } else {
+                    reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText}`));
+                }
+            }
+        };
+        xhr.onerror = () => reject(new Error('Network error'));
+        if (xhr.upload && typeof onProgress === 'function') {
+            xhr.upload.onprogress = (ev) => {
+                if (ev.lengthComputable) {
+                    const pct = Math.round((ev.loaded / ev.total) * 100);
+                    try {
+                        onProgress(pct);
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            };
+        }
+        const fd = new FormData();
+        fd.append('file', file, file.name);
+        xhr.send(fd);
+    });
+}
+
 export default request;
+

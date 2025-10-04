@@ -1,12 +1,12 @@
 import { useState } from "react";
 import type { GeneralTabInformation } from "./TabFactory";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { OctagonAlertIcon, FolderTree, PlusCircle, ExternalLink } from "lucide-react";
-import { Accordion } from "@/components/ui/accordion";
-import TabAccordion from "@/components/tab-accordion";
-import ServerInformation from "@/components/server-information";
-import { Button } from "@/components/ui/button";
-import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@/components/ui/kibo-ui/dropzone";
+import { Accordion } from "../components/ui/accordion";
+import TabAccordion from "../components/tab-accordion";
+import ServerInformation from "../components/server-information";
+import { Button } from "../components/ui/button";
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../components/ui/kibo-ui/dropzone";
 
 type WebTabProps = GeneralTabInformation & {
 
@@ -16,6 +16,9 @@ const WebTab = (props: WebTabProps) => {
     const [error, setError] = useState<string | null>(null);
     const [droppedFiles, setDroppedFiles] = useState<File[]|undefined>();
     const [port, setPort] = useState<number>(80);
+    const [uploading, setUploading] = useState<boolean>(false);
+    const [uploadProgress, setUploadProgress] = useState<number>(0);
+    const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
     // TODO: useeffect load filestructure from container
     // TODO: load port for direct link from container info
@@ -23,16 +26,33 @@ const WebTab = (props: WebTabProps) => {
     function handleDropFiles(accFiles: File[]) {
         console.log("Accepted files:", accFiles);
         setDroppedFiles(accFiles);
+        setUploadedUrl(null);
+        setError(null);
     }
 
-    function submitUploadFiles() {
+    async function submitUploadFiles() {
         if (!droppedFiles || droppedFiles.length === 0) {
             setError("No files to upload.");
             return;
         }
-        // TODO: POST upload files to container
-        setDroppedFiles(undefined);
+        setError(null);
+        setUploading(true);
+        setUploadProgress(0);
+        try {
+            // currently only upload the first file
+            const file = droppedFiles[0];
+            const { uploadFile } = await import('../lib/api');
+            const res = await uploadFile(props.id, file, 'web', (pct) => setUploadProgress(pct));
+            setUploadedUrl(res.url);
+            setDroppedFiles(undefined);
+        } catch (e: any) {
+            console.error(e);
+            setError(e?.message ?? 'Upload failed');
+        } finally {
+            setUploading(false);
+        }
     }
+
 
     return (
         <div className="w-full h-full flex flex-col items-center gap-4">
@@ -61,7 +81,7 @@ const WebTab = (props: WebTabProps) => {
                               icon={<PlusCircle />}
                               title="Upload Resource">
                     <Dropzone accept={{ '*/*': [] }}
-                              maxFiles={10}
+                              maxFiles={1}
                               maxSize={10 * 1024 * 1024} // 10 MB
                               onDrop={handleDropFiles}
                               onError={console.error}
@@ -69,7 +89,27 @@ const WebTab = (props: WebTabProps) => {
                         <DropzoneEmptyState />
                         <DropzoneContent />
                     </Dropzone>
-                    <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0} onClick={submitUploadFiles}>Upload</Button>
+                    {
+                        uploading ? (
+                            <div className="w-full mt-2">
+                                <label className="text-sm text-muted-foreground">Uploading: {uploadProgress}%</label>
+                                <progress className="w-full" value={uploadProgress} max={100} />
+                            </div>
+                        ) : <></>
+                    }
+                    {
+                        uploadedUrl ? (
+                            <div className="w-full mt-2">
+                                <a className="text-primary underline" 
+                                   href={uploadedUrl}
+                                   target="_blank"
+                                   rel="noreferrer">
+                                    Open uploaded resource
+                                </a>
+                            </div>
+                        ) : <></>
+                    }
+                    <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0 || uploading} onClick={submitUploadFiles}>{uploading ? 'Uploading...' : 'Upload'}</Button>
                 </TabAccordion>
             </Accordion>
         </div>
