@@ -17,7 +17,7 @@ type WebTabProps = GeneralTabInformation & {
 const WebTab = (props: WebTabProps) => {
     const [error, setError] = useState<string | null>(null);
     const [droppedFiles, setDroppedFiles] = useState<File[]|undefined>();
-    const [port, setPort] = useState<number>(80);
+    const [port, _setPort] = useState<number>(80);
     const [uploading, setUploading] = useState<boolean>(false);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);

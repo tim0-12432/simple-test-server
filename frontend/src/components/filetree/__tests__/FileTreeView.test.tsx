@@ -1,4 +1,4 @@
-import React from 'react';
+import '@testing-library/jest-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,12 +18,12 @@ describe('FileTreeView', () => {
   it('renders root entries and expands directory to load children', async () => {
     const now = new Date().toISOString();
     // root contains one dir and one file
-    (fetchWebFileTree as any).mockImplementation(async (serverId: string, path: string | null) => {
+    (fetchWebFileTree as any).mockImplementation(async (_serverId: string, path: string | null) => {
       if (!path) {
-        return { entries: [ { name: 'assets', path: 'assets', type: 'dir', size: 4096, modifiedAt: now }, { name: 'index.html', path: 'index.html', type: 'file', size: 128, modifiedAt: now } ], truncated: false };
+        return { entries: [ { name: 'assets', path: 'assets', type: 'dir', size: 4096, modifiedAt: now }, { name: 'index.html', path: 'index.html', type: 'file', size: 128, modifiedAt: now } ], truncated: false } as unknown as { entries: import('@/types/FileTree').FileTreeEntry[]; truncated: boolean };
       }
       if (path === 'assets') {
-        return { entries: [ { name: 'app.js', path: 'assets/app.js', type: 'file', size: 1024, modifiedAt: now } ], truncated: false };
+        return { entries: [ { name: 'app.js', path: 'assets/app.js', type: 'file', size: 1024, modifiedAt: now } ], truncated: false } as unknown as { entries: import('@/types/FileTree').FileTreeEntry[]; truncated: boolean };
       }
       return { entries: [], truncated: false };
     });

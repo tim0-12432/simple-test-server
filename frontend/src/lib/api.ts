@@ -83,11 +83,13 @@ export function uploadFile(serverId: string, file: File, serverType: string, onP
     });
 }
 
-export async function fetchWebFileTree(serverId: string, path: string | null = null): Promise<{ entries: Array<{ name: string; path: string; type: string; size: number; modifiedAt: string }>; truncated: boolean; }> {
+import type { FileTreeResponse } from '../types/FileTree';
+
+export async function fetchWebFileTree(serverId: string, path: string | null = null): Promise<FileTreeResponse> {
     const p = path ? `?path=${encodeURIComponent(path)}` : '';
     const url = `/protocols/web/${encodeURIComponent(serverId)}/filetree${p}`;
-    const res = await request<typeof fetchWebFileTree>("GET", url, undefined);
-    return res as any;
+    const res = await request<FileTreeResponse>("GET", url, undefined);
+    return res;
 }
 
 export default request;

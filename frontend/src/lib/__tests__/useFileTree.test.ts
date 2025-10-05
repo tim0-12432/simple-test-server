@@ -14,8 +14,8 @@ describe('useFileTree', () => {
   });
 
   it('fetches root children and caches result', async () => {
-    const mocked = fetchWebFileTree as unknown as ReturnType<typeof vi.fn>;
-    (fetchWebFileTree as any).mockResolvedValueOnce({ entries: [{ name: 'index.html', path: 'index.html', type: 'file', size: 10, modifiedAt: new Date().toISOString() }], truncated: false });
+    
+    (fetchWebFileTree as any).mockResolvedValueOnce({ entries: [{ name: 'index.html', path: 'index.html', type: 'file', size: 10, modifiedAt: new Date().toISOString() }], truncated: false } as unknown as { entries: import('@/types/FileTree').FileTreeEntry[]; truncated: boolean });
 
     const { result } = renderHook(() => useFileTree('server-1'));
 

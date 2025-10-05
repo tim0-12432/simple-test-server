@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ThemeProvider } from "@/components/theme-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
 import type { Tab } from './types/Tab';
@@ -81,7 +81,7 @@ function App() {
             <div className='flex-1' />
             <footer className='w-full max-w-xs xl:max-w-md 2xl:max-w-lg'>
               <div className='p-2 border-t border-border text-center text-xs text-muted-foreground'>
-                Created with ❤️ by <a className='underline-offset-4 hover:underline' href="https://github.com/tim0-12432">Tim0-12432</a>
+                Created with <span className="animate-pulse">❤️</span> by <a className='underline-offset-4 hover:underline' href="https://github.com/tim0-12432">Tim0-12432</a>
               </div>
             </footer>
           </TabsContent>

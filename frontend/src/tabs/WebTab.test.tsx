@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+// React import removed; JSX runtime handles React
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 
 // Mock UI modules and API BEFORE importing the tested module so imports don't resolve real aliased files
 vi.mock('../lib/api', () => ({
-  uploadFile: vi.fn((serverId: string, file: File, serverType: string, onProgress?: (pct: number) => void) => {
+  uploadFile: vi.fn(( _serverId: string, _file: File, _serverType: string, onProgress?: (pct: number) => void) => {
     return new Promise((resolve) => {
       if (onProgress) {
         onProgress(20);

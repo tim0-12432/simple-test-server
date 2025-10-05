@@ -15,8 +15,8 @@ class MockXHR {
   onerror: any = null;
   _listeners: Record<string, Function[]> = {};
 
-  open(method: string, url: string) {}
-  send(fd: any) {
+  open(_method: string, _url: string) {}
+  send(_fd: any) {
     // simulate progress
     setTimeout(() => {
       this.readyState = 4;
