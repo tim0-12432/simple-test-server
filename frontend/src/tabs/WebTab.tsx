@@ -1,12 +1,14 @@
 import { useState } from "react";
 import type { GeneralTabInformation } from "./TabFactory";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import { OctagonAlertIcon, FolderTree, PlusCircle, ExternalLink } from "lucide-react";
+import { OctagonAlertIcon, FolderTree, PlusCircle, ExternalLink, RefreshCwIcon } from "lucide-react";
 import { Accordion } from "../components/ui/accordion";
 import TabAccordion from "../components/tab-accordion";
 import ServerInformation from "../components/server-information";
 import { Button } from "../components/ui/button";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../components/ui/kibo-ui/dropzone";
+import FileTreeView from "../components/filetree/FileTreeView";
+import Progress from "@/components/progress";
 
 type WebTabProps = GeneralTabInformation & {
 
@@ -19,6 +21,7 @@ const WebTab = (props: WebTabProps) => {
     const [uploading, setUploading] = useState<boolean>(false);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+    const [refreshHandle, setRefreshHandle] = useState<number>(0);
 
     // TODO: useeffect load filestructure from container
     // TODO: load port for direct link from container info
@@ -53,6 +56,10 @@ const WebTab = (props: WebTabProps) => {
         }
     }
 
+    const handleRefresh = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        setRefreshHandle((h) => h + 1);
+    };
 
     return (
         <div className="w-full h-full flex flex-col items-center gap-4">
@@ -75,7 +82,11 @@ const WebTab = (props: WebTabProps) => {
                                    additionalControls={<Button variant="link" asChild><a href={`http://localhost:${port}`} target="_blank">Open Webpage <ExternalLink /></a></Button>} />
                 <TabAccordion id='folder_tree'
                               icon={<FolderTree />}
-                              title="Folder Tree">
+                              title="Folder Tree"
+                              tabActions={<Button className="h-8" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
+                    <div className="w-full">
+                        <FileTreeView key={refreshHandle} serverId={props.id} baseUrl={`http://localhost:${port}`} />
+                    </div>
                 </TabAccordion>
                 <TabAccordion id='upload_resource'
                               icon={<PlusCircle />}
@@ -89,14 +100,7 @@ const WebTab = (props: WebTabProps) => {
                         <DropzoneEmptyState />
                         <DropzoneContent />
                     </Dropzone>
-                    {
-                        uploading ? (
-                            <div className="w-full mt-2">
-                                <label className="text-sm text-muted-foreground">Uploading: {uploadProgress}%</label>
-                                <progress className="w-full" value={uploadProgress} max={100} />
-                            </div>
-                        ) : <></>
-                    }
+                    <Progress active={uploading} value={uploadProgress} className="w-full mb-2 h-2" />
                     {
                         uploadedUrl ? (
                             <div className="w-full mt-2">

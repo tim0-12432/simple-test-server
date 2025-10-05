@@ -26,6 +26,61 @@ func InitializeWebProtocolRoutes(root *gin.RouterGroup) {
 		}
 	})
 
+	// List file tree entries inside the container's webroot
+	web.GET("/:id/filetree", func(c *gin.Context) {
+		serverID := c.Param("id")
+		container, err := services.GetContainer(serverID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "container not found"})
+			return
+		}
+
+		if strings.ToUpper(container.Type) != "WEB" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "container is not a web server"})
+			return
+		}
+
+		// path query param is relative path inside webroot
+		relPath := c.Query("path")
+		// default to root
+		if relPath == "" {
+			relPath = ""
+		}
+
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 6*time.Second)
+		defer cancel()
+
+		entries, truncated, err := docker.ListContainerDir(ctx, container.Name, relPath, 1000)
+		if err != nil {
+			// map known errors
+			s := err.Error()
+			if strings.Contains(s, "container not found") {
+				c.JSON(http.StatusNotFound, gin.H{"error": "container not found"})
+				return
+			}
+			if strings.Contains(s, "must be relative") || strings.Contains(s, "must not contain") {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid path"})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to list directory: %v", err)})
+			return
+		}
+
+		// map to response shape
+		out := make([]gin.H, 0, len(entries))
+		for _, e := range entries {
+			out = append(out, gin.H{
+				"name":       e.Name,
+				"path":       e.Path,
+				"type":       e.Type,
+				"size":       e.Size,
+				"modifiedAt": e.ModifiedAt.Format(time.RFC3339),
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"entries": out, "truncated": truncated})
+	})
+
 	// Upload a file and copy it into the nginx container webroot
 	web.POST("/:id/upload", func(c *gin.Context) {
 		serverID := c.Param("id")

@@ -5,7 +5,7 @@ import { vi, describe, it, expect } from 'vitest';
 
 // Mock UI modules and API BEFORE importing the tested module so imports don't resolve real aliased files
 vi.mock('../lib/api', () => ({
-  uploadWebResource: vi.fn((serverId: string, file: File, onProgress?: (pct: number) => void) => {
+  uploadFile: vi.fn((serverId: string, file: File, serverType: string, onProgress?: (pct: number) => void) => {
     return new Promise((resolve) => {
       if (onProgress) {
         onProgress(20);
