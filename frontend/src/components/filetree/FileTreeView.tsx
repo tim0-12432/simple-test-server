@@ -89,7 +89,7 @@ function NodeChildren({
               </TreeNodeTrigger>
             </div>
 
-            <TreeNodeContent hasChildren={hasChildren} className="pl-6">
+            <TreeNodeContent hasChildren={serverType === 'web' || hasChildren} className="pl-6">
               {hasChildren ? (
                 <NodeChildren path={childPath} serverId={serverId} serverType={serverType} baseUrl={baseUrl} />
               ) : (

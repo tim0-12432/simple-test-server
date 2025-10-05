@@ -84,7 +84,7 @@ const WebTab = (props: WebTabProps) => {
                 <TabAccordion id='folder_tree'
                               icon={<FolderTree />}
                               title="Folder Tree"
-                              tabActions={<Button className="h-8" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
+                              tabActions={<Button className="h-8 cursor-pointer" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
                         <div className="w-full">
                         <FileTreeView key={refreshHandle} serverId={props.id} serverType={'web'} baseUrl={`http://localhost:${port}`} />
                     </div>
@@ -120,7 +120,7 @@ const WebTab = (props: WebTabProps) => {
                 <TabAccordion id='access_logs'
                               icon={<OctagonAlertIcon />}
                               title="Access Logs"
-                              tabActions={<Button className="h-8" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
+                              tabActions={<Button className="h-8 cursor-pointer" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
                     <div className="w-full">
                         <LogsPanel serverId={props.id} refreshSignal={refreshHandle} />
                     </div>

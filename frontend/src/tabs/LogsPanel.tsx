@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import Progress from '@/components/progress';
 import { useWebLogs } from '@/lib/useWebLogs';
 import type { LogLine } from '@/types/Log';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function LogsPanel({ serverId, refreshSignal }: { serverId: string; refreshSignal?: number }) {
     const [tail, setTail] = useState<number>(500);
@@ -18,12 +19,17 @@ export default function LogsPanel({ serverId, refreshSignal }: { serverId: strin
         <div className="w-full">
             <div className="flex items-center gap-2 mb-2">
                 <label className="text-sm">Lines:</label>
-                <select value={tail} onChange={(e) => setTail(Number(e.target.value))} className="border rounded px-2 py-1">
-                    <option value={50}>50</option>
-                    <option value={200}>200</option>
-                    <option value={500}>500</option>
-                    <option value={2000}>2000</option>
-                </select>
+                <Select onValueChange={(value) => setTail(Number(value))} value={tail.toString()}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Lines" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value={'50'}>50</SelectItem>
+                        <SelectItem value={'200'}>200</SelectItem>
+                        <SelectItem value={'500'}>500</SelectItem>
+                        <SelectItem value={'2000'}>2000</SelectItem>
+                    </SelectContent>
+                </Select>
                 <Button variant="ghost" onClick={handleLocalRefresh}>Refresh</Button>
                 {truncated && <span className="text-xs text-muted-foreground">(truncated)</span>}
             </div>

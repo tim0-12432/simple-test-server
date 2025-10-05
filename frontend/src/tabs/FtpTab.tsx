@@ -66,7 +66,7 @@ const FtpTab = (props: FtpTabProps) => {
 
       <Accordion type="multiple" className="w-full mx-2 space-y-4" defaultValue={['folder_tree']}>
         <ServerInformation id={props.id} reloadTabs={props.reloadTabs} additionalControls={<Button variant="link" asChild><a href={`ftp://localhost`} target="_blank">Open FTP <ExternalLink /></a></Button>} />
-        <TabAccordion id="folder_tree" icon={<FolderTree />} title="Folder Tree" tabActions={<Button className="h-8" onClick={handleRefresh} title="Refresh" variant={'ghost'}><RefreshCwIcon className="h-4 w-4" /></Button>}>
+        <TabAccordion id="folder_tree" icon={<FolderTree />} title="Folder Tree" tabActions={<Button className="h-8 cursor-pointer" onClick={handleRefresh} title="Refresh" variant={'ghost'}><RefreshCwIcon className="h-4 w-4" /></Button>}>
             <div className="w-full">
             <FileTreeView key={refreshHandle} serverId={props.id} serverType={'ftp'} baseUrl={`ftp://localhost`} />
           </div>
@@ -78,13 +78,6 @@ const FtpTab = (props: FtpTabProps) => {
             <DropzoneContent />
           </Dropzone>
           <Progress active={uploading} value={uploadProgress} className="w-full mb-2 h-2" />
-          {uploadedUrl ? (
-            <div className="w-full mt-2">
-              <a className="text-primary underline" href={uploadedUrl} target="_blank" rel="noreferrer">
-                Open uploaded resource
-              </a>
-            </div>
-          ) : null}
           <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0 || uploading} onClick={submitUploadFiles}>
             {uploading ? 'Uploading...' : 'Upload'}
           </Button>
