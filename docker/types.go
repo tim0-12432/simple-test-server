@@ -1,6 +1,15 @@
 package docker
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+// sentinel errors for docker operations
+var (
+	ErrContainerNotFound   = errors.New("container not found")
+	ErrContainerNotRunning = errors.New("container not running")
+)
 
 // FileEntry represents a file or directory inside a container
 type FileEntry struct {

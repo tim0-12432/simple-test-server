@@ -10,8 +10,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tim0-12432/simple-test-server/db/dtos"
 	"github.com/tim0-12432/simple-test-server/db/services"
 	"github.com/tim0-12432/simple-test-server/docker"
+	"strconv"
 )
 
 func InitializeWebProtocolRoutes(root *gin.RouterGroup) {
@@ -81,8 +83,74 @@ func InitializeWebProtocolRoutes(root *gin.RouterGroup) {
 		c.JSON(http.StatusOK, gin.H{"entries": out, "truncated": truncated})
 	})
 
+	// Get access logs from the nginx container
+	web.GET("/:id/logs", func(c *gin.Context) {
+		serverID := c.Param("id")
+		container, err := services.GetContainer(serverID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "container not found"})
+			return
+		}
+
+		if strings.ToUpper(container.Type) != "WEB" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "container is not a web server"})
+			return
+		}
+
+		// parse query params
+		tail := 500
+		if t := c.Query("tail"); t != "" {
+			if n, perr := strconv.Atoi(t); perr == nil {
+				tail = n
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid tail parameter"})
+				return
+			}
+		}
+		if tail < 1 || tail > 5000 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "tail must be between 1 and 5000"})
+			return
+		}
+
+		sinceStr := c.Query("since")
+		var since *time.Time
+		if sinceStr != "" {
+			if t, err := time.Parse(time.RFC3339, sinceStr); err == nil {
+				since = &t
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid since parameter, expected RFC3339"})
+				return
+			}
+		}
+
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+		defer cancel()
+
+		lines, truncated, err := GetAccessLogs(ctx, serverID, tail, since)
+		if err != nil {
+			if err == docker.ErrContainerNotFound {
+				c.JSON(http.StatusNotFound, gin.H{"error": "container not found"})
+				return
+			}
+			if err == docker.ErrContainerNotRunning {
+				c.JSON(http.StatusConflict, gin.H{"error": "container not running", "lines": lines, "truncated": truncated})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to get logs: %v", err)})
+			return
+		}
+
+		out := make([]gin.H, 0, len(lines))
+		for _, l := range lines {
+			out = append(out, gin.H{"ts": l.TS.Format(time.RFC3339), "line": l.Line})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"lines": out, "truncated": truncated, "container_running": container.Status == dtos.Running})
+	})
+
 	// Upload a file and copy it into the nginx container webroot
 	web.POST("/:id/upload", func(c *gin.Context) {
+
 		serverID := c.Param("id")
 		container, err := services.GetContainer(serverID)
 		if err != nil {

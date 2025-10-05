@@ -8,14 +8,39 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
+
+	"github.com/tim0-12432/simple-test-server/db/dtos"
+	"github.com/tim0-12432/simple-test-server/db/services"
+	"github.com/tim0-12432/simple-test-server/docker"
 )
 
-// UploadResult contains metadata about the saved uploaded file.
-type UploadResult struct {
-	LocalPath   string
-	SafeName    string
-	Size        int64
-	ContentType string
+// GetAccessLogs returns access logs for a web container identified by containerID.
+// tail: number of lines to return (1..5000). since: optional time to filter since.
+func GetAccessLogs(ctx context.Context, containerID string, tail int, since *time.Time) ([]dtos.LogLine, bool, error) {
+	container, err := services.GetContainer(containerID)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if strings.ToUpper(container.Type) != "WEB" {
+		return nil, false, fmt.Errorf("container is not a web server")
+	}
+
+	lines, truncated, err := docker.FetchContainerLogs(ctx, container.ID, tail, since)
+	if err != nil {
+		// map docker-specific sentinel errors
+		if err == docker.ErrContainerNotFound {
+			return nil, false, err
+		}
+		if err == docker.ErrContainerNotRunning {
+			return lines, truncated, err
+		}
+		return nil, false, err
+	}
+
+	return lines, truncated, nil
 }
 
 // SaveUploadedFileToTmp validates the multipart file header, sniffs the content type, enforces size limits, saves to a temp file and returns metadata.

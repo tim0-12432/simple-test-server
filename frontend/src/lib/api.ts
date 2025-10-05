@@ -1,5 +1,5 @@
 
-const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:8000' : window.location.origin;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? (import.meta.env.DEV ? 'http://localhost:8000' : window.location.origin);
 
 export const API_URL = `${BACKEND_URL}/api/v1`;
 
@@ -89,6 +89,15 @@ export async function fetchWebFileTree(serverId: string, path: string | null = n
     const p = path ? `?path=${encodeURIComponent(path)}` : '';
     const url = `/protocols/web/${encodeURIComponent(serverId)}/filetree${p}`;
     const res = await request<FileTreeResponse>("GET", url, undefined);
+    return res;
+}
+
+// Logs
+import type { LogResponse } from '../types/Log';
+
+export async function fetchWebLogs(serverId: string, tail: number = 500): Promise<LogResponse> {
+    const url = `/protocols/web/${encodeURIComponent(serverId)}/logs?tail=${tail}`;
+    const res = await request<LogResponse>("GET", url, undefined);
     return res;
 }
 

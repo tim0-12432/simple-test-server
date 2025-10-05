@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../components/ui/kibo-ui/dropzone";
 import FileTreeView from "../components/filetree/FileTreeView";
 import Progress from "@/components/progress";
+import LogsPanel from "./LogsPanel";
 
 type WebTabProps = GeneralTabInformation & {
 
@@ -91,6 +92,7 @@ const WebTab = (props: WebTabProps) => {
                 <TabAccordion id='upload_resource'
                               icon={<PlusCircle />}
                               title="Upload Resource">
+                    {/* Upload accordion unchanged */}
                     <Dropzone accept={{ '*/*': [] }}
                               maxFiles={1}
                               maxSize={10 * 1024 * 1024} // 10 MB
@@ -114,6 +116,14 @@ const WebTab = (props: WebTabProps) => {
                         ) : <></>
                     }
                     <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0 || uploading} onClick={submitUploadFiles}>{uploading ? 'Uploading...' : 'Upload'}</Button>
+                </TabAccordion>
+                <TabAccordion id='access_logs'
+                              icon={<OctagonAlertIcon />}
+                              title="Access Logs"
+                              tabActions={<Button className="h-8" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
+                    <div className="w-full">
+                        <LogsPanel serverId={props.id} refreshSignal={refreshHandle} />
+                    </div>
                 </TabAccordion>
             </Accordion>
         </div>
