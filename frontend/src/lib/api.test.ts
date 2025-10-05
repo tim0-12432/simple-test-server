@@ -14,10 +14,17 @@ class MockXHR {
   onreadystatechange: any = null;
   onerror: any = null;
   _listeners: Record<string, Function[]> = {};
+  lastOpenUrl: string | null = null;
+  lastOpenMethod: string | null = null;
 
-  open(_method: string, _url: string) {}
+  open(method: string, url: string) { this.lastOpenMethod = method; this.lastOpenUrl = url; }
   send(_fd: any) {
-    // simulate progress
+    // simulate upload progress events if a handler exists
+    if (this.upload && typeof this.upload.onprogress === 'function') {
+      this.upload.onprogress({ lengthComputable: true, loaded: 1, total: 2 } as any);
+      this.upload.onprogress({ lengthComputable: true, loaded: 2, total: 2 } as any);
+    }
+    // simulate final response
     setTimeout(() => {
       this.readyState = 4;
       this.status = 201;
@@ -31,7 +38,8 @@ class MockXHR {
   }
 }
 
-vi.stubGlobal('XMLHttpRequest', MockXHR as any);
+const mockXhr = new MockXHR();
+vi.stubGlobal('XMLHttpRequest', function() { return mockXhr } as any);
 
 describe('uploadFile', () => {
   it('resolves with JSON response and reports progress', async () => {
@@ -41,5 +49,13 @@ describe('uploadFile', () => {
     const res = await p;
     expect(res).toHaveProperty('url');
     expect(res.url).toContain('http://');
+  });
+
+  it('sends request to ftp protocol path when serverType is ftp', async () => {
+    const file = new File(['x'], 'x.txt', { type: 'text/plain' });
+    // call uploadFile with serverType 'ftp'
+    const p = uploadFile('server-ftp', file, 'ftp');
+    const res = await p;
+    expect(mockXhr.lastOpenUrl).toContain('/protocols/ftp/');
   });
 });

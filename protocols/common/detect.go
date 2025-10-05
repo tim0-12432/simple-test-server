@@ -1,10 +1,10 @@
-package web
+package common
 
 import (
 	"net/http"
 	"strings"
 )
 
-func detectContentType(b []byte) string {
+func DetectContentType(b []byte) string {
 	return strings.SplitN(http.DetectContentType(b), ";", 2)[0]
 }

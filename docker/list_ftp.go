@@ -5,18 +5,17 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 )
 
-// ListContainerDir lists the immediate children of the given relative path
-// inside the container's webroot. relPath must be relative (no leading '/')
+// ListFtpDir lists the immediate children of the given relative path
+// inside the container's FTP root (/home/user). relPath must be relative (no leading '/')
 // and must not contain path traversal ("..").
 //
 // Returns the entries, a boolean indicating whether the result was truncated
 // due to the maxEntries limit, and an error if something went wrong.
-func ListContainerDir(ctx context.Context, containerId string, relPath string, maxEntries int) ([]FileEntry, bool, error) {
+func ListFtpDir(ctx context.Context, containerId string, relPath string, maxEntries int) ([]FileEntry, bool, error) {
 	if containerId == "" {
 		return nil, false, fmt.Errorf("container id empty")
 	}
@@ -40,12 +39,12 @@ func ListContainerDir(ctx context.Context, containerId string, relPath string, m
 		return nil, false, err
 	}
 
-	webroot := "/usr/share/nginx/html"
+	ftproot := "/home/user"
 	var target string
 	if relPath == "" {
-		target = webroot
+		target = ftproot
 	} else {
-		target = filepath.Join(webroot, relPath)
+		target = filepath.Join(ftproot, relPath)
 	}
 
 	// set a conservative timeout for the exec
@@ -53,14 +52,11 @@ func ListContainerDir(ctx context.Context, containerId string, relPath string, m
 	defer cancel()
 
 	// Use find to list immediate children with metadata (type|size|mtime|path)
-	// Note: This requires `find` in the container to support -printf. Most
-	// standard GNU find implementations do; some minimal images may not.
 	cmd := exec.CommandContext(ctx, "docker", "exec", containerId, "find", target, "-maxdepth", "1", "-mindepth", "1", "-printf", "%y|%s|%T@|%p\n")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		outStr := strings.TrimSpace(string(out))
-		// some minimal find implementations (e.g. busybox) do not support -printf
-		// fallback to a POSIX shell loop that prints: type|size|mtime|path with mtime=0.0
+		// fallback for minimal find implementations that don't support -printf
 		if strings.Contains(strings.ToLower(outStr), "unrecognized -printf") || strings.Contains(strings.ToLower(outStr), "unknown primary") || strings.Contains(strings.ToLower(outStr), "-printf") {
 			fallback := `for f in ` + target + `/* ; do [ -e "$f" ] || continue ; t='?'; if [ -d "$f" ]; then t='d'; elif [ -L "$f" ]; then t='l'; elif [ -f "$f" ]; then t='f'; fi; s=0; if [ -f "$f" ]; then s=$(wc -c <"$f" 2>/dev/null || echo 0); fi; printf "%s|%s|%s|%s\n" "$t" "$s" "0.0" "$f"; done`
 			fbCmd := exec.CommandContext(ctx, "docker", "exec", containerId, "sh", "-c", fallback)
@@ -72,10 +68,9 @@ func ListContainerDir(ctx context.Context, containerId string, relPath string, m
 			if raw == "" {
 				return []FileEntry{}, false, nil
 			}
-			entries, truncated := parseFindOutput(raw, webroot, maxEntries)
+			entries, truncated := parseFindOutput(raw, ftproot, maxEntries)
 			return entries, truncated, nil
 		}
-		// return output to help debugging, but wrap it
 		return nil, false, fmt.Errorf("docker exec find failed: %v - %s", err, outStr)
 	}
 
@@ -84,70 +79,6 @@ func ListContainerDir(ctx context.Context, containerId string, relPath string, m
 		return []FileEntry{}, false, nil
 	}
 
-	entries, truncated := parseFindOutput(raw, webroot, maxEntries)
+	entries, truncated := parseFindOutput(raw, ftproot, maxEntries)
 	return entries, truncated, nil
-}
-
-// parseFindOutput parses the raw output from find -printf (one entry per line)
-// format: "%y|%s|%T@|%p\n" and returns FileEntry slice and truncated flag.
-func parseFindOutput(raw string, webroot string, maxEntries int) ([]FileEntry, bool) {
-	lines := strings.Split(raw, "\n")
-	truncated := false
-	entries := make([]FileEntry, 0, len(lines))
-
-	limit := maxEntries
-	if limit <= 0 {
-		limit = 500
-	}
-
-	count := 0
-	for _, line := range lines {
-		parts := strings.SplitN(line, "|", 4)
-		if len(parts) != 4 {
-			// skip malformed line
-			continue
-		}
-		if count >= limit {
-			truncated = true
-			break
-		}
-		typeChar := parts[0]
-		sizeStr := parts[1]
-		mtimeStr := parts[2]
-		pathStr := parts[3]
-
-		sz, _ := strconv.ParseInt(sizeStr, 10, 64)
-		mtf, _ := strconv.ParseFloat(mtimeStr, 64)
-		sec := int64(mtf)
-		nsec := int64((mtf - float64(sec)) * 1e9)
-		modTime := time.Unix(sec, nsec).UTC()
-
-		var typ string
-		switch typeChar {
-		case "f":
-			typ = "file"
-		case "d":
-			typ = "dir"
-		case "l":
-			typ = "symlink"
-		default:
-			typ = "unknown"
-		}
-
-		// compute relative path inside webroot
-		rel := strings.TrimPrefix(pathStr, webroot)
-		rel = strings.TrimPrefix(rel, "/")
-		name := filepath.Base(pathStr)
-
-		entries = append(entries, FileEntry{
-			Name:       name,
-			Path:       rel,
-			Type:       typ,
-			Size:       sz,
-			ModifiedAt: modTime,
-		})
-		count++
-	}
-
-	return entries, truncated
 }

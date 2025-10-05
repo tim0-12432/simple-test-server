@@ -16,6 +16,7 @@ import { ExternalLink, FileIcon, FolderIcon } from 'lucide-react';
 
 type FileTreeViewProps = {
   serverId: string;
+  serverType?: string;
   baseUrl?: string; // e.g. http://localhost:8080
 };
 
@@ -25,8 +26,18 @@ function humanSize(n: number) {
   return `${Math.round((n / (1024 * 1024)) * 10) / 10} MB`;
 }
 
-function NodeChildren({ path, serverId, baseUrl }: { path: string | null; serverId: string; baseUrl?: string }) {
-  const { getChildren, getCached, loadingPaths } = useFileTree(serverId);
+function NodeChildren({
+  path,
+  serverId,
+  serverType,
+  baseUrl,
+}: {
+  path: string | null;
+  serverId: string;
+  serverType?: string;
+  baseUrl?: string;
+}) {
+  const { getChildren, getCached, loadingPaths } = useFileTree(serverId, serverType ?? 'web');
 
   const key = path || '';
   const cached = getCached(path);
@@ -46,8 +57,8 @@ function NodeChildren({ path, serverId, baseUrl }: { path: string | null; server
     return () => {
       mounted = false;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path, serverId, serverType]);
 
   if (isLoading && !cached) {
     return <div className="px-4 py-2 text-sm text-muted-foreground">Loading...</div>;
@@ -72,33 +83,36 @@ function NodeChildren({ path, serverId, baseUrl }: { path: string | null; server
               <TreeIcon hasChildren={hasChildren} icon={hasChildren ? <FolderIcon /> : <FileIcon />} />
               <TreeNodeTrigger>
                 <div className="flex w-full items-center gap-2">
-                  <TreeLabel>
-                    {e.name}
-                  </TreeLabel>
+                  <TreeLabel>{e.name}</TreeLabel>
                   <span className="text-xs text-muted-foreground">{e.type === 'file' ? humanSize(e.size) : ''}</span>
                 </div>
               </TreeNodeTrigger>
             </div>
 
-            <TreeNodeContent hasChildren={true} className="pl-6">
+            <TreeNodeContent hasChildren={hasChildren} className="pl-6">
               {hasChildren ? (
-                <NodeChildren path={childPath} serverId={serverId} baseUrl={baseUrl} />
+                <NodeChildren path={childPath} serverId={serverId} serverType={serverType} baseUrl={baseUrl} />
               ) : (
                 <>
-                {baseUrl ? (
-                  <div className="px-8 py-1">
-                    <TreeNode level={2}>
-                      <div className="flex items-center gap-2">
-                        <TreeIcon icon={<ExternalLink className="h-4 w-4" />} />
-                        <TreeLabel className="group relative mx-1 px-3 py-2">
-                          <a className="text-primary underline px-3 py-2 rounded-md transition-all duration-200 hover:bg-accent/50 bg-accent/0" href={`${baseUrl}/${e.path}`} target="_blank" rel="noreferrer">
-                            Open
-                          </a>
-                        </TreeLabel>
-                      </div>
-                    </TreeNode>
-                  </div>
-                ) : null}
+                  {baseUrl ? (
+                    <div className="px-8 py-1">
+                      <TreeNode level={2}>
+                        <div className="flex items-center gap-2">
+                          <TreeIcon icon={<ExternalLink className="h-4 w-4" />} />
+                          <TreeLabel className="group relative mx-1 px-3 py-2">
+                            <a
+                              className="text-primary underline px-3 py-2 rounded-md transition-all duration-200 hover:bg-accent/50 bg-accent/0"
+                              href={`${baseUrl}/${e.path}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Open
+                            </a>
+                          </TreeLabel>
+                        </div>
+                      </TreeNode>
+                    </div>
+                  ) : null}
                 </>
               )}
             </TreeNodeContent>
@@ -109,8 +123,8 @@ function NodeChildren({ path, serverId, baseUrl }: { path: string | null; server
   );
 }
 
-export default function FileTreeView({ serverId, baseUrl }: FileTreeViewProps) {
-  const { getChildren, getCached } = useFileTree(serverId);
+export default function FileTreeView({ serverId, serverType, baseUrl }: FileTreeViewProps) {
+  const { getChildren, getCached } = useFileTree(serverId, serverType ?? 'web');
 
   useEffect(() => {
     // load root on mount
@@ -122,7 +136,7 @@ export default function FileTreeView({ serverId, baseUrl }: FileTreeViewProps) {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverId]);
+  }, [serverId, serverType]);
 
   const rootCached = getCached(null);
 
@@ -130,7 +144,7 @@ export default function FileTreeView({ serverId, baseUrl }: FileTreeViewProps) {
     <TreeProvider defaultExpandedIds={[]} showIcons selectable indent={18} animateExpand>
       <TreeView>
         {rootCached ? (
-          <NodeChildren path={null} serverId={serverId} baseUrl={baseUrl} />
+          <NodeChildren path={null} serverId={serverId} serverType={serverType} baseUrl={baseUrl} />
         ) : (
           <div className="px-4 py-2 text-sm text-muted-foreground">Loading...</div>
         )}

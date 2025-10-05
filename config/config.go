@@ -21,6 +21,8 @@ type envConfig struct {
 	AdminUser      string   `mapstructure:"ADMIN_USER"`
 	AdminPass      string   `mapstructure:"ADMIN_PASS"`
 	AllowedOrigins []string `mapstructure:"CORS_ALLOWED_ORIGINS"`
+	// UploadMaxBytes configures the maximum allowed uploaded file size in bytes. If unset, defaults to 10MB.
+	UploadMaxBytes int64 `mapstructure:"UPLOAD_MAX_BYTES"`
 }
 
 func loadEnvVariables() (config *envConfig) {
@@ -32,6 +34,8 @@ func loadEnvVariables() (config *envConfig) {
 	viper.SetDefault("ADMIN_USER", "admin@hosting.test")
 	viper.SetDefault("ADMIN_PASS", "pleaseChange123!")
 	viper.SetDefault("CORS_ALLOWED_ORIGINS", nil)
+	// default upload max bytes: 10 MB
+	viper.SetDefault("UPLOAD_MAX_BYTES", 10<<20)
 
 	viper.AddConfigPath(".")
 	viper.SetConfigName("app")
@@ -40,7 +44,7 @@ func loadEnvVariables() (config *envConfig) {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			log.Printf("No .env file found, using default values and environment variables.")
 		} else {
 			log.Fatalf("Error reading .env file, %s", err)

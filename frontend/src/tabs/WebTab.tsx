@@ -84,8 +84,8 @@ const WebTab = (props: WebTabProps) => {
                               icon={<FolderTree />}
                               title="Folder Tree"
                               tabActions={<Button className="h-8" onClick={handleRefresh} title="Refresh" variant={"ghost"}><RefreshCwIcon className="h-4 w-4" /></Button>}>
-                    <div className="w-full">
-                        <FileTreeView key={refreshHandle} serverId={props.id} baseUrl={`http://localhost:${port}`} />
+                        <div className="w-full">
+                        <FileTreeView key={refreshHandle} serverId={props.id} serverType={'web'} baseUrl={`http://localhost:${port}`} />
                     </div>
                 </TabAccordion>
                 <TabAccordion id='upload_resource'
