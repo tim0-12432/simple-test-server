@@ -9,11 +9,13 @@ import (
 	"strings"
 	"time"
 
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/tim0-12432/simple-test-server/db/dtos"
 	"github.com/tim0-12432/simple-test-server/db/services"
 	"github.com/tim0-12432/simple-test-server/docker"
-	"strconv"
+	. "github.com/tim0-12432/simple-test-server/protocols/common"
 )
 
 func InitializeWebProtocolRoutes(root *gin.RouterGroup) {

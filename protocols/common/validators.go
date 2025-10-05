@@ -1,4 +1,4 @@
-package web
+package common
 
 import (
 	"fmt"
@@ -41,8 +41,8 @@ func extensionForContentType(contentType string) string {
 	}
 }
 
-// buildSafeName creates a filename using sanitized name + extension.
-func buildSafeName(rawFilename string, contentType string) string {
+// BuildSafeName creates a filename using sanitized name + extension.
+func BuildSafeName(rawFilename string, contentType string) string {
 	ext := filepath.Ext(rawFilename)
 	name := strings.TrimSuffix(filepath.Base(rawFilename), ext)
 	if ext == "" {

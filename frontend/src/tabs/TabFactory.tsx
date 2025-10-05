@@ -4,6 +4,7 @@ import MqttTab from "./MqttTab";
 import CreateNewTab from "./CreateNewTab";
 import { TriangleAlertIcon } from "lucide-react";
 import WebTab from "./WebTab";
+import FtpTab from "./FtpTab";
 
 export type GeneralTabInformation = {
     id: string;
@@ -22,6 +23,9 @@ const TabFactory = (type: TabType, params: GeneralTabInformation) => {
             break;
         case 'create_new':
             component = <CreateNewTab reloadTabs={params.reloadTabs} />;
+            break;
+        case 'FTP':
+            component = <FtpTab {...params} />;
             break;
         default:
             component = (
