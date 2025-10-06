@@ -11,9 +11,9 @@ import (
 )
 
 type ServerConfiguration struct {
-	name         string            `json:"name"`
-	portMapping  map[int]int       `json:"ports"`
-	envVariables map[string]string `json:"env"`
+	Name  string            `json:"name"`
+	Ports []map[string]int  `json:"ports"`
+	Env   map[string]string `json:"env"`
 }
 
 func StartServerWithProgress(reqId string, serverType string, config ServerConfiguration) {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -56,14 +57,27 @@ func RunContainer(config ServerConfiguration, cType string, image string, name s
 	for k, v := range env {
 		allEnv[k] = v
 	}
-	for hp, cp := range config.portMapping {
-		allPorts[cp] = hp
+
+	// Merge ports from configuration (frontend provides an array of maps like [{"80":8080}])
+	for _, mapping := range config.Ports {
+		for hpStr, cp := range mapping {
+			if hpStr == "" {
+				continue
+			}
+			hp, err := strconv.Atoi(hpStr)
+			if err != nil {
+				// ignore malformed host port entries
+				continue
+			}
+			allPorts[cp] = hp
+		}
 	}
-	for k, v := range config.envVariables {
+
+	for k, v := range config.Env {
 		allEnv[k] = v
 	}
-	if config.name != "" {
-		finalName = config.name
+	if config.Name != "" {
+		finalName = config.Name
 	}
 
 	args := []string{"run", "-d", "--name", finalName, "--label", "managed_by=simple-test-server"}
