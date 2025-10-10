@@ -5,6 +5,8 @@ import CreateNewTab from "./CreateNewTab";
 import { TriangleAlertIcon } from "lucide-react";
 import WebTab from "./WebTab";
 import FtpTab from "./FtpTab";
+import SmbTab from "./SmbTab";
+
 
 export type GeneralTabInformation = {
     id: string;
@@ -26,6 +28,9 @@ const TabFactory = (type: TabType, params: GeneralTabInformation) => {
             break;
         case 'FTP':
             component = <FtpTab {...params} />;
+            break;
+        case 'SMB':
+            component = <SmbTab {...params} />;
             break;
         default:
             component = (
