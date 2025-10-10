@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { GeneralTabInformation } from "./TabFactory";
 import { websocketConnect } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon, FolderTree, ScrollText } from "lucide-react";
 import type MqttData from "@/types/MqttData";
 import TopicTree from "@/components/topic-tree";
+import MessageLog from "@/components/message-log/MessageLog";
 import { Accordion } from "@/components/ui/accordion";
 import TabAccordion from "@/components/tab-accordion";
 import ServerInformation from "@/components/server-information";
@@ -17,11 +18,32 @@ const MqttTab = (props: MqttTabProps) => {
     const [error, setError] = useState<string | null>(null);
     const [messages, setMessages] = useState<MqttData[]>([]);
 
+    const wsRef = useRef<WebSocket | null>(null);
+    const [connected, setConnected] = useState(false);
+
     useEffect(() => {
-        if (props.id) {
-            websocketConnect(`/protocols/mqtt/${props.id}/messages`, messageHandler, errorHandler);
-        }
         setError(null);
+        // close previous socket if any
+        if (wsRef.current) {
+            try { wsRef.current.close(); } catch (e) { /* ignore */ }
+            wsRef.current = null;
+            setConnected(false);
+        }
+
+        if (props.id) {
+            const ws = websocketConnect(`/protocols/mqtt/${props.id}/messages`, messageHandler, errorHandler);
+            wsRef.current = ws;
+            ws.onopen = () => setConnected(true);
+            ws.onclose = () => setConnected(false);
+            ws.onerror = () => setConnected(false);
+        }
+
+        return () => {
+            if (wsRef.current) {
+                try { wsRef.current.close(); } catch (e) { /* ignore */ }
+                wsRef.current = null;
+            }
+        };
     }, [props.id]);
 
     function messageHandler(msg: MqttData) {
@@ -57,6 +79,7 @@ const MqttTab = (props: MqttTabProps) => {
                 <TabAccordion id='messages'
                               icon={<ScrollText />}
                               title="Message Log">
+                    <MessageLog messages={messages} />
                 </TabAccordion>
             </Accordion>
         </div>
