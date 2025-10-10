@@ -24,7 +24,7 @@ export function request<T>(method: string, url: string, body: object|undefined =
         });
 }
 
-export function websocketConnect<T>(url: string, onMessage: (msg: T) => void, onError: (err: Event) => void): void {
+export function websocketConnect<T>(url: string, onMessage: (msg: T) => void, onError: (err: Event) => void): WebSocket {
     const backendUrl = BACKEND_URL.replace(/^http/, 'ws');
     const ws = new WebSocket(`${backendUrl}/api/v1${url}`);
     ws.onmessage = (event) => {
@@ -39,6 +39,7 @@ export function websocketConnect<T>(url: string, onMessage: (msg: T) => void, on
         console.error('WebSocket error:', event);
         onError(event);
     };
+    return ws;
 }
 
 export type UploadResponse = {

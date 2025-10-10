@@ -1,5 +1,5 @@
 import type MqttData from "@/types/MqttData";
-import { TreeExpander, TreeIcon, TreeLabel, TreeNodeContent, TreeNodeTrigger, TreeProvider, TreeView } from "./ui/kibo-ui/tree";
+import { TreeNode, TreeExpander, TreeIcon, TreeLabel, TreeNodeContent, TreeNodeTrigger, TreeProvider, TreeView } from "./ui/kibo-ui/tree";
 import {Folder, FileJson} from "lucide-react"
 
 
@@ -45,29 +45,43 @@ const TopicTree = (props: TopicTreeProps) => {
         return <FileJson className="h-4 w-4" />;
     }
 
-    function renderChildren(children: cNode[]): React.ReactNode {
-        return children.map((child) => (
-            <>
-                <TreeNodeTrigger key={child.id}>
-                    <TreeExpander />
-                    <TreeIcon icon={getIconForNode(child)} />
-                    <TreeLabel>{child.name}</TreeLabel>
-                </TreeNodeTrigger>
-                {
-                    hasChildren(child) ? (
-                        <TreeNodeContent>
-                            {renderChildren(child.children!)}
+    function renderChildren(children: cNode[], level = 0): React.ReactNode {
+        return children.map((child, index) => {
+            const childHasChildren = hasChildren(child);
+            const isLast = index === children.length - 1;
+            return (
+                <TreeNode key={child.id} nodeId={child.id} level={level} isLast={isLast} parentPath={[]}>
+                    <TreeNodeTrigger>
+                        <TreeExpander hasChildren={childHasChildren} />
+                        <TreeIcon icon={getIconForNode(child)} hasChildren={childHasChildren} />
+                        <TreeLabel>{child.name}</TreeLabel>
+                    </TreeNodeTrigger>
+                    {childHasChildren ? (
+                        <TreeNodeContent hasChildren={true}>
+                            {renderChildren(child.children!, level + 1)}
                         </TreeNodeContent>
-                    ) : null
-                }
-            </>
-        ));
+                    ) : null}
+                </TreeNode>
+            );
+        });
     }
 
+    const tree = buildTree(props.messages);
+    const defaultExpandedIds: string[] = [];
+    function collect(nodes: cNode[]) {
+        for (const n of nodes) {
+            if (hasChildren(n)) {
+                defaultExpandedIds.push(n.id);
+                if (n.children) collect(n.children);
+            }
+        }
+    }
+    collect(tree);
+
     return (
-        <TreeProvider>
+        <TreeProvider defaultExpandedIds={defaultExpandedIds}>
             <TreeView>
-                {renderChildren(buildTree(props.messages))}
+                {renderChildren(tree)}
             </TreeView>
         </TreeProvider>
     )

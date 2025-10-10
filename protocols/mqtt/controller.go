@@ -1,8 +1,13 @@
 package mqtt
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"sync"
+	"time"
+
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -49,14 +54,50 @@ func InitializeMqttProtocolRoutes(root *gin.RouterGroup) {
 		}
 		defer conn.Close()
 
-		var url = "localhost:" + fmt.Sprint(container.Ports[1883])
+		port := 1883
+		if p, ok := container.Ports[port]; ok {
+			port = p
+		}
+		var url = "localhost:" + fmt.Sprint(port)
 
-		subscribeToMqtt(url, func(message []byte) {
-			err := conn.WriteMessage(websocket.TextMessage, message)
-			if err != nil {
-				c.Status(http.StatusInternalServerError)
-				return
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		// mutex to protect websocket writes
+		var writeMutex sync.Mutex
+
+		stop, err := startMqttSubscriber(ctx, url, func(message []byte) {
+			writeMutex.Lock()
+			defer writeMutex.Unlock()
+			if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+				// Log and cancel on write error
+				log.Printf("websocket write error: %v", err)
+				cancel()
 			}
 		})
+		if err != nil {
+			log.Printf("failed to start mqtt subscriber: %v", err)
+			// close connection
+			_ = conn.Close()
+			return
+		}
+		defer stop()
+
+		// reader to detect closure from client
+		go func() {
+			for {
+				if _, _, err := conn.ReadMessage(); err != nil {
+					// client likely closed connection
+					log.Printf("websocket read error or closed: %v", err)
+					cancel()
+					return
+				}
+				// small sleep to avoid busy loop
+				time.Sleep(10 * time.Millisecond)
+			}
+		}()
+
+		// wait until context cancelled (either reader or write error)
+		<-ctx.Done()
 	})
 }
