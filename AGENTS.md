@@ -93,3 +93,15 @@ Examples:
   - package.json
   - tsconfig.json
   - vite.config.ts
+
+## Testing
+
+### Frontend
+
+1. `cd frontend`
+2. if dependencies needed: `bun install`
+3. `bun run test`
+
+### Backend
+
+`go test ./...` executes all tests
