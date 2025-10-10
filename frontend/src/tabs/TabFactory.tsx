@@ -17,14 +17,14 @@ export type GeneralTabInformation = {
 const TabFactory = (type: TabType, params: GeneralTabInformation) => {
     let component = null;
     switch (type) {
+        case 'create_new':
+            component = <CreateNewTab reloadTabs={params.reloadTabs} />;
+            break;
         case 'MQTT':
             component = <MqttTab {...params} />;
             break;
         case 'WEB':
             component = <WebTab {...params} />;
-            break;
-        case 'create_new':
-            component = <CreateNewTab reloadTabs={params.reloadTabs} />;
             break;
         case 'FTP':
             component = <FtpTab {...params} />;
