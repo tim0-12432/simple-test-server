@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import type { GeneralTabInformation } from "./TabFactory";
 import { websocketConnect } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { OctagonAlertIcon, FolderTree, ScrollText } from "lucide-react";
+import { OctagonAlertIcon, FolderTree, ScrollText, CircleCheck, CircleX, Trash } from "lucide-react";
 import type MqttData from "@/types/MqttData";
 import TopicTree from "@/components/topic-tree";
 import MessageLog from "@/components/message-log/MessageLog";
 import { Accordion } from "@/components/ui/accordion";
 import TabAccordion from "@/components/tab-accordion";
 import ServerInformation from "@/components/server-information";
+import { Button } from "@/components/ui/button";
 
 type MqttTabProps = GeneralTabInformation & {
 
@@ -54,6 +55,27 @@ const MqttTab = (props: MqttTabProps) => {
         setError(`WebSocket error: ${err instanceof Error ? err.message : "Unknown error"}`);
     }
 
+    const ServerControls = (
+        <>
+            <div className="flex items-center justify-end text-sm py-2 gap-1">
+                {
+                    connected
+                    ? <CircleCheck className="inline h-4 w-4 mr-1 text-green-500" />
+                    : <CircleX className="inline h-4 w-4 mr-1 text-red-500" />
+                }
+                {connected ? 'Connected' : 'Disconnected'}
+            </div>
+            <div className="flex items-center justify-end">
+                <Button variant="outline" className="flex items-center justify-center gap-2 cursor-pointer"
+                        onClick={() => setMessages([])}
+                        disabled={messages.length === 0}>
+                    Clear Messages
+                    <Trash className="h-4 w-4 mr-1" />
+                </Button>
+            </div>
+        </>
+    );
+
     return (
         <div className="w-full h-full flex flex-col items-center gap-4">
             {
@@ -70,7 +92,9 @@ const MqttTab = (props: MqttTabProps) => {
             <Accordion type="multiple"
                        className="w-full mx-2 space-y-4"
                        defaultValue={['topic_tree']}>
-                <ServerInformation id={props.id} reloadTabs={props.reloadTabs} />
+                <ServerInformation id={props.id}
+                                   reloadTabs={props.reloadTabs}
+                                   additionalControls={ServerControls} />
                 <TabAccordion id='topic_tree'
                               icon={<FolderTree />}
                               title="Topic Tree">

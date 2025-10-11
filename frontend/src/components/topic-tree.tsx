@@ -1,6 +1,8 @@
 import type MqttData from "@/types/MqttData";
-import { TreeNode, TreeExpander, TreeIcon, TreeLabel, TreeNodeContent, TreeNodeTrigger, TreeProvider, TreeView } from "./ui/kibo-ui/tree";
+import { TreeNode, TreeExpander, TreeIcon, TreeNodeContent, TreeNodeTrigger, TreeProvider, TreeView, type TreeLabelProps, TreeLabel } from "./ui/kibo-ui/tree";
 import {Folder, FileJson} from "lucide-react"
+import { useEffect, useState } from "react";
+import { hashCode } from "@/lib/utils";
 
 
 type TopicTreeProps = {
@@ -14,8 +16,12 @@ type cNode = {
 }
 
 const TopicTree = (props: TopicTreeProps) => {
+    const [loading, setLoading] = useState(true);
+    const [tree, setTree] = useState<cNode[]>([]);
+    const [defaultExpandedIds, setDefaultExpandedIds] = useState<string[]>([]);
+    const [expanded, setExpanded] = useState<string[]|null>(null);
 
-    function buildTree(messages: MqttData[]): cNode[] {
+    async function buildTree(messages: MqttData[]): Promise<cNode[]> {
         const roots: cNode[] = [];
         for (const msg of messages) {
             const parts = msg.topic.split('/');
@@ -23,9 +29,10 @@ const TopicTree = (props: TopicTreeProps) => {
             let currentLevel = roots;
 
             for (const part of parts) {
+                const pathUntilNode = parts.slice(0, parts.indexOf(part) + 1).join('/').toLowerCase();
                 let node = currentLevel.find(n => n.name === part);
                 if (!node) {
-                    node = { id: `${part}-${Math.random()}`, name: part, children: [] };
+                    node = { id: await hashCode(pathUntilNode), name: part, children: [] };
                     currentLevel.push(node);
                 }
                 currentLevel = node.children!;
@@ -45,6 +52,21 @@ const TopicTree = (props: TopicTreeProps) => {
         return <FileJson className="h-4 w-4" />;
     }
 
+    function onClickNode(nodeId: string) {
+        setExpanded(prev => {
+            let newExpanded = new Set(prev);
+            if (prev == null) {
+                newExpanded = new Set(defaultExpandedIds);
+            }
+            if (newExpanded.has(nodeId)) {
+                newExpanded.delete(nodeId);
+            } else {
+                newExpanded.add(nodeId);
+            }
+            return Array.from(newExpanded);
+        });
+    }
+
     function renderChildren(children: cNode[], level = 0): React.ReactNode {
         return children.map((child, index) => {
             const childHasChildren = hasChildren(child);
@@ -52,9 +74,13 @@ const TopicTree = (props: TopicTreeProps) => {
             return (
                 <TreeNode key={child.id} nodeId={child.id} level={level} isLast={isLast} parentPath={[]}>
                     <TreeNodeTrigger>
-                        <TreeExpander hasChildren={childHasChildren} />
+                        <TreeExpander hasChildren={childHasChildren} onClick={() => onClickNode(child.id)} />
                         <TreeIcon icon={getIconForNode(child)} hasChildren={childHasChildren} />
-                        <TreeLabel>{child.name}</TreeLabel>
+                        {
+                            !childHasChildren
+                            ? <PayloadTreeLabel>{child.name}</PayloadTreeLabel>
+                            : <TreeLabel>{child.name}</TreeLabel>
+                        }
                     </TreeNodeTrigger>
                     {childHasChildren ? (
                         <TreeNodeContent hasChildren={true}>
@@ -66,25 +92,46 @@ const TopicTree = (props: TopicTreeProps) => {
         });
     }
 
-    const tree = buildTree(props.messages);
-    const defaultExpandedIds: string[] = [];
-    function collect(nodes: cNode[]) {
-        for (const n of nodes) {
-            if (hasChildren(n)) {
-                defaultExpandedIds.push(n.id);
-                if (n.children) collect(n.children);
+    useEffect(() => {
+        setLoading(true);
+        (async () => {
+            const builtTree = await buildTree(props.messages);
+            const defaultIds: string[] = [];
+            function collect(nodes: cNode[], level: number) {
+                if (level === 3) {
+                    return;
+                }
+                for (const n of nodes) {
+                    if (hasChildren(n)) {
+                        defaultIds.push(n.id);
+                        if (n.children) collect(n.children, level + 1);
+                    }
+                }
             }
-        }
-    }
-    collect(tree);
+            collect(builtTree, 1);
+            setTree(builtTree);
+            setDefaultExpandedIds(defaultIds);
+            setLoading(false);
+        })();
+    }, [props.messages]);
 
-    return (
-        <TreeProvider defaultExpandedIds={defaultExpandedIds}>
-            <TreeView>
-                {renderChildren(tree)}
-            </TreeView>
-        </TreeProvider>
-    )
+    if (!loading) {
+        if (tree.length === 0) {
+            return <div className="text-sm text-muted-foreground">No topics available.</div>;
+        }
+        return (
+            <TreeProvider defaultExpandedIds={expanded == null ? defaultExpandedIds : expanded}>
+                <TreeView>
+                    {renderChildren(tree)}
+                </TreeView>
+            </TreeProvider>
+        );
+    }
+    return <div>Loading...</div>;
 };
 
 export default TopicTree;
+
+const PayloadTreeLabel = (props: TreeLabelProps) => (
+  <span className='font flex-1 wrap-anywhere text-sm' {...props} />
+);
