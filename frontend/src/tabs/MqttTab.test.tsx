@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 vi.mock('@/lib/api', () => ({
@@ -19,13 +20,18 @@ const baseProps = {
     reloadTabs: () => {}
 };
 
-test('renders topic tree and message log accordions', () => {
+test('renders topic tree and message log accordions', async () => {
     render(<MqttTab {...(baseProps as any)} />);
-    expect(screen.getByText('Topic Tree')).toBeInTheDocument();
-    expect(screen.getByText('Message Log')).toBeInTheDocument();
+    expect(await screen.findByText('Topic Tree')).toBeInTheDocument();
+    expect(await screen.findByText('Message Log')).toBeInTheDocument();
 });
 
-test('shows no messages text when none', () => {
+test('shows no messages text when none', async () => {
+    const user = userEvent.setup();
     render(<MqttTab {...(baseProps as any)} />);
-    expect(screen.getByText(/No messages received yet/i)).toBeInTheDocument();
+    // open the Message Log accordion before asserting its content
+    await user.click(await screen.findByText('Message Log'));
+    expect(await screen.findByText(/No messages received yet/i)).toBeInTheDocument();
 });
+
+

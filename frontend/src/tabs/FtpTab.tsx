@@ -78,6 +78,16 @@ const FtpTab = (props: FtpTabProps) => {
             <DropzoneContent />
           </Dropzone>
           <Progress active={uploading} value={uploadProgress} className="w-full mb-2 h-2" />
+          {uploadedUrl ? (
+            <div className="w-full mt-2">
+              <a className="text-primary underline"
+                 href={uploadedUrl}
+                 target="_blank"
+                 rel="noreferrer">
+                Open uploaded resource
+              </a>
+            </div>
+          ) : null}
           <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0 || uploading} onClick={submitUploadFiles}>
             {uploading ? 'Uploading...' : 'Upload'}
           </Button>

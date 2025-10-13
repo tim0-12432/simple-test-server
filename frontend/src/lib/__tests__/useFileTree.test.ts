@@ -3,6 +3,12 @@ import { renderHook, act } from '@testing-library/react';
 import { useFileTree } from '../useFileTree';
 
 vi.mock('../api', () => ({
+  API_URL: 'http://localhost',
+  request: vi.fn(),
+  websocketConnect: vi.fn(),
+  uploadFile: vi.fn(),
+  fetchFileTree: vi.fn(),
+  fetchWebLogs: vi.fn(),
   fetchWebFileTree: vi.fn(),
 }));
 

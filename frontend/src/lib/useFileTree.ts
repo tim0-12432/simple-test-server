@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import type { FileTreeEntry } from '../types/FileTree';
-import { fetchFileTree } from './api';
+import { fetchFileTree, fetchWebFileTree } from './api';
 
-export function useFileTree(serverId: string, serverType: string) {
+export function useFileTree(serverId: string, serverType: string = 'web') {
     const cache = useRef(new Map<string, { entries: FileTreeEntry[]; truncated: boolean }>());
     const [loadingPaths, setLoadingPaths] = useState<Record<string, boolean>>({});
 
@@ -18,7 +18,9 @@ export function useFileTree(serverId: string, serverType: string) {
         }
         setLoading(key, true);
         try {
-            const res = await fetchFileTree(serverType, serverId, path);
+            const res = serverType === 'web'
+                ? await fetchWebFileTree(serverId, path)
+                : await fetchFileTree(serverType, serverId, path);
             cache.current.set(key, { entries: res.entries, truncated: res.truncated });
             return { entries: res.entries, truncated: res.truncated };
         } finally {
@@ -30,7 +32,9 @@ export function useFileTree(serverId: string, serverType: string) {
         const key = path || '';
         setLoading(key, true);
         try {
-            const res = await fetchFileTree(serverType, serverId, path);
+            const res = serverType === 'web'
+                ? await fetchWebFileTree(serverId, path)
+                : await fetchFileTree(serverType, serverId, path);
             cache.current.set(key, { entries: res.entries, truncated: res.truncated });
             return { entries: res.entries, truncated: res.truncated };
         } finally {
@@ -44,3 +48,4 @@ export function useFileTree(serverId: string, serverType: string) {
 
     return { getChildren, refresh, getCached, loadingPaths } as const;
 }
+

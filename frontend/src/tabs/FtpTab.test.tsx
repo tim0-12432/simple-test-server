@@ -60,8 +60,8 @@ describe('FtpTab upload flow', () => {
     const simulateDropButton = screen.getByText('Simulate Drop');
     fireEvent.click(simulateDropButton);
 
-    const uploadButton = screen.getByRole('button', { name: /upload/i });
-    expect((uploadButton as HTMLButtonElement).disabled).toBe(false);
+    const uploadButton = await screen.findByRole('button', { name: /upload/i });
+    await waitFor(() => expect((uploadButton as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(uploadButton);
 
     await waitFor(() => expect(screen.getByText(/open uploaded resource/i)).toBeTruthy());
