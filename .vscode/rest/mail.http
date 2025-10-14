@@ -1,0 +1,11 @@
+
+# Get all mail messages for a specific server
+
+@id = 04e0b23b6b43aa0e680826e5fd486f1f95bd3ae58221955adc81a480dafae7b2
+
+GET {{base_url}}/api/v1/protocols/mail/{{id}}/messages
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8000
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*

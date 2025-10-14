@@ -18,7 +18,7 @@ type ServerConfiguration struct {
 
 func StartServerWithProgress(reqId string, serverType string, config ServerConfiguration) {
 	progress.Default.New(reqId)
-	progress.Default.Send(reqId, progress.Event{Percent: 10, Message: "starting", Error: false})
+	progress.Default.Send(reqId, progress.Event{Percent: 10, Message: "Starting", Error: false})
 
 	var server servers.ServerDefinition
 	switch serverType {

@@ -68,7 +68,8 @@ Configure the application using an `app.env` file or environment variables:
 
 **Required:** Docker socket access (`/var/run/docker.sock`) for container management.
 
-
 ## Contributing
 
 ## License
+
+[MIT](./LICENSE.md)

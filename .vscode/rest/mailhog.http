@@ -1,0 +1,30 @@
+# List all emails (v1)
+GET http://localhost:8025/api/v1/messages
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8025
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*
+
+###
+
+# List all emails (v2)
+GET http://localhost:8025/api/v2/messages
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8025
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*
+
+###
+
+# Get one specific email by ID
+
+@id = v_EHseBGjEyMDKeU-csOy1M-R54L607CYoru2df-NUQ=@mailhog.example
+
+GET http://localhost:8025/api/v1/messages/{{id}}
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+Host: localhost:8025
+Cache-Control: no-cache
+Content-Type: application/json
+Accept: */*

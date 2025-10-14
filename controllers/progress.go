@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -32,8 +33,9 @@ func InitializeProgressRoutes(root *gin.RouterGroup) {
 					c.Writer.Flush()
 					return
 				}
+				sanitizedMessage := strings.ReplaceAll(ev.Message, "\"", "\\\"")
 				// send event as JSON
-				fmt.Fprintf(c.Writer, "data: {\"percent\":%d,\"message\":\"%s\",\"error\":%v}\n\n", ev.Percent, ev.Message, ev.Error)
+				fmt.Fprintf(c.Writer, "data: {\"percent\":%d,\"message\":\"%s\",\"error\":%v}\n\n", ev.Percent, sanitizedMessage, ev.Error)
 				c.Writer.Flush()
 			case <-notify:
 				return

@@ -3,7 +3,7 @@ package servers
 type MailServer struct{}
 
 func (s MailServer) GetImage() string {
-	return "servercontainers/mail-box:latest"
+	return "mailhog/mailhog:latest"
 }
 
 func (s MailServer) GetName() string {
@@ -11,7 +11,7 @@ func (s MailServer) GetName() string {
 }
 
 func (s MailServer) GetPorts() []int {
-	return []int{25, 465, 587}
+	return []int{1025, 8025}
 }
 
 func (s MailServer) GetEnv() map[string]string {

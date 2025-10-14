@@ -75,7 +75,9 @@ const CreateNewTab = (props: CreateNewTabProps) => {
         (async () => {
             function closeEventSource(eventSource: EventSource) {
                 eventSource.close();
-                setSuccess("Server created successfully.");
+                if (!error) {
+                    setSuccess("Server created successfully.");
+                }
                 setLoading(false);
                 props.reloadTabs();
             }
@@ -99,10 +101,15 @@ const CreateNewTab = (props: CreateNewTabProps) => {
 
             const eventSource = new EventSource(`${API_URL}/servers/progress/${reqId}`);
             eventSource.onmessage = (event) => {
+                // {"percent":50,"message":"pull failed: docker pull failed: exit status 1 - Error response from daemon: Head "https://ghcr.io/v2/servercontainers/mailbox/manifests/latest": denied","error":true}
                 const data = JSON.parse(event.data) as {percent: number; message: string; error: boolean};
                 setLoadingState(data);
                 if (data.percent >= 100 || data.error) {
                     closeEventSource(eventSource);
+                }
+                if (data.error) {
+                    setError(data.message);
+                    setLoading(false);
                 }
             }
             eventSource.onerror = () => closeEventSource(eventSource);

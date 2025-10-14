@@ -4,10 +4,12 @@ go 1.25.0
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.5.0
+	github.com/emersion/go-imap v1.0.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
+	github.com/mailhog/data v1.0.1
 	github.com/pocketbase/pocketbase v0.29.2
 	github.com/spf13/viper v1.20.1
 )

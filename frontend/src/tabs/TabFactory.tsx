@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type TabType from "@/types/Tab";
 import MqttTab from "./MqttTab";
+import MailTab from "./MailTab";
 import CreateNewTab from "./CreateNewTab";
 import { TriangleAlertIcon } from "lucide-react";
 import WebTab from "./WebTab";
@@ -31,6 +32,9 @@ const TabFactory = (type: TabType, params: GeneralTabInformation) => {
             break;
         case 'SMB':
             component = <SmbTab {...params} />;
+            break;
+        case 'MAIL':
+            component = <MailTab {...params} />;
             break;
         default:
             component = (
