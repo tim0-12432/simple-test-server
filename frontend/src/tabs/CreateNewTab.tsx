@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Progress from "@/components/progress";
+import { Progress } from "@/components/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import serverTypes from "@/lib/servers";
-import type ServerType from "@/types/Server";
+import type { ServerType } from "@/types/Server";
 import { useState, useRef, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
@@ -23,7 +23,7 @@ type CreateNewTabProps = {
     reloadTabs: () => void;
 }
 
-const CreateNewTab = (props: CreateNewTabProps) => {
+export function CreateNewTab(props: CreateNewTabProps) {
     const [serverType, setServerType] = useState<ServerType>(serverTypes[0]);
     const [loading, setLoading] = useState(false);
     const [loadingState, setLoadingState] = useState<LoadingState | null>(null);
@@ -104,12 +104,12 @@ const CreateNewTab = (props: CreateNewTabProps) => {
                 // {"percent":50,"message":"pull failed: docker pull failed: exit status 1 - Error response from daemon: Head "https://ghcr.io/v2/servercontainers/mailbox/manifests/latest": denied","error":true}
                 const data = JSON.parse(event.data) as {percent: number; message: string; error: boolean};
                 setLoadingState(data);
-                if (data.percent >= 100 || data.error) {
-                    closeEventSource(eventSource);
-                }
                 if (data.error) {
                     setError(data.message);
                     setLoading(false);
+                }
+                if (data.percent >= 100 || data.error) {
+                    closeEventSource(eventSource);
                 }
             }
             eventSource.onerror = () => closeEventSource(eventSource);
@@ -148,7 +148,7 @@ const CreateNewTab = (props: CreateNewTabProps) => {
                     <div className="flex flex-col space-y-4 w-full max-w-xs xl:max-w-md 2xl:max-w-lg">
                         <div className="w-full space-y-1.5">
                             <Label htmlFor="server-type">Server Type</Label>
-                            <Select onValueChange={handleTypeChange} defaultValue={serverTypes[0]}>
+                            <Select disabled={loading} onValueChange={handleTypeChange} defaultValue={serverTypes[0]}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select server type" />
                                 </SelectTrigger>
@@ -206,5 +206,3 @@ const CreateNewTab = (props: CreateNewTabProps) => {
         </div>
     );
 }
-
-export default CreateNewTab;

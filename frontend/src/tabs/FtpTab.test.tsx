@@ -45,7 +45,7 @@ vi.mock('../components/ui/kibo-ui/dropzone', () => ({
   DropzoneEmptyState: (props: any) => React.createElement('div', {}, props.children),
 }));
 
-import FtpTab from './FtpTab';
+import { FtpTab } from './FtpTab';
 
 const baseProps = {
   type: 'FTP' as const,

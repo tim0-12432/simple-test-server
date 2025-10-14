@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import MailTab from '../MailTab';
+import { MailTab } from '../MailTab';
 
-test('renders MailTab with info alert', () => {
+test('renders MailTab with container information', () => {
   render(<MailTab id="test" reloadTabs={() => {}} />);
-  expect(screen.getByText(/Mail tab is not yet implemented/i)).toBeInTheDocument();
+  expect(screen.getByText(/Container Information/i)).toBeInTheDocument();
 });

@@ -123,7 +123,7 @@ function NodeChildren({
   );
 }
 
-export default function FileTreeView({ serverId, serverType, baseUrl }: FileTreeViewProps) {
+export function FileTreeView({ serverId, serverType, baseUrl }: FileTreeViewProps) {
   const { getChildren, getCached } = useFileTree(serverId, serverType ?? 'web');
 
   useEffect(() => {

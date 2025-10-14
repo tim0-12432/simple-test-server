@@ -47,7 +47,7 @@ vi.mock('../components/ui/kibo-ui/dropzone', () => ({
   DropzoneEmptyState: (props: any) => React.createElement('div', {}, props.children),
 }));
 
-import WebTab from './WebTab';
+import { WebTab } from './WebTab';
 
 // Minimal GeneralTabInformation mock
 const baseProps = {

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import Progress from '@/components/progress';
+import { Progress } from '@/components/progress';
 import { useWebLogs } from '@/lib/useWebLogs';
 import type { LogLine } from '@/types/Log';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function LogsPanel({ serverId, refreshSignal }: { serverId: string; refreshSignal?: number }) {
+export function LogsPanel({ serverId, refreshSignal }: { serverId: string; refreshSignal?: number }) {
     const [tail, setTail] = useState<number>(500);
     const [localRefresh, setLocalRefresh] = useState<number>(0);
     const { lines, loading, error, truncated } = useWebLogs(serverId, tail, (refreshSignal ?? 0) + localRefresh);

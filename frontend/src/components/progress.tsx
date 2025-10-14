@@ -1,5 +1,6 @@
 import {Progress as ShadProgress} from "@/components/ui/progress";
 import { useEffect, useState } from "react";
+import type { ReactElement } from "react";
 
 type ProgressProps = {
     active: boolean;
@@ -7,7 +8,7 @@ type ProgressProps = {
     value?: number;
 }
 
-const Progress = (props: ProgressProps) => {
+export function Progress(props: ProgressProps): ReactElement {
     const [progress, setProgress] = useState(0);
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
     
@@ -19,13 +20,13 @@ const Progress = (props: ProgressProps) => {
         } else {
             setProgress(props.value || 0);
             if (timer) {
-                clearTimeout(timer);
+                clearInterval(timer);
                 setTimer(null);
             }
         }
         return () => {
             if (timer) {
-                clearTimeout(timer);
+                clearInterval(timer);
             }
             setTimer(null);
         };
@@ -38,5 +39,3 @@ const Progress = (props: ProgressProps) => {
         <ShadProgress value={props.value || progress} className={props.className + " [&>div]:bg-gradient-to-r [&>div]:from-cyan-400 [&>div]:via-sky-500 [&>div]:to-indigo-500 [&>div]:rounded-l-full"}></ShadProgress>
     );
 }
-
-export default Progress;

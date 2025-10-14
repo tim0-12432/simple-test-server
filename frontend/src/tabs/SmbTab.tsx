@@ -7,24 +7,22 @@ import TabAccordion from '../components/tab-accordion';
 import ServerInformation from '../components/server-information';
 import { Button } from '../components/ui/button';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '../components/ui/kibo-ui/dropzone';
-import FileTreeView from '../components/filetree/FileTreeView';
-import Progress from '@/components/progress';
+import { FileTreeView } from '../components/filetree/FileTreeView';
+import { Progress } from '@/components/progress';
 
 type SmbTabProps = GeneralTabInformation & {
 
 }
 
-const SmbTab = (props: SmbTabProps) => {
+export function SmbTab(props: SmbTabProps) {
   const [error, setError] = useState<string | null>(null);
   const [droppedFiles, setDroppedFiles] = useState<File[] | undefined>();
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const [refreshHandle, setRefreshHandle] = useState<number>(0);
 
   function handleDropFiles(accFiles: File[]) {
     setDroppedFiles(accFiles);
-    setUploadedUrl(null);
     setError(null);
   }
 
@@ -39,8 +37,7 @@ const SmbTab = (props: SmbTabProps) => {
     try {
       const file = droppedFiles[0];
       const { uploadFile } = await import('../lib/api');
-      const res = await uploadFile(props.id, file, 'smb', (pct: number) => setUploadProgress(pct));
-      setUploadedUrl(res.url);
+      await uploadFile(props.id, file, 'smb', (pct: number) => setUploadProgress(pct));
       setDroppedFiles(undefined);
     } catch (e: any) {
       console.error(e);
@@ -85,6 +82,4 @@ const SmbTab = (props: SmbTabProps) => {
       </Accordion>
     </div>
   );
-};
-
-export default SmbTab;
+}

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import TopicTree from './topic-tree'
+import { TopicTree } from './topic-tree'
 
 const messages = [
   { topic: 'sensors/temp', payload: '23.5' },

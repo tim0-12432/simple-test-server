@@ -6,4 +6,5 @@ export type MqttData = {
     timestamp?: string;
 }
 
-export default MqttData;
+export { MqttData };
+

@@ -5,10 +5,10 @@ export type ServerType = typeof serverTypes[number];
 export type ServerInformation = {
     name: string;
     image: string;
-    ports: int[];
+    ports: number[];
     env: {
         [key: string]: string;
     };
 };
 
-export default ServerType;
+export { ServerType };

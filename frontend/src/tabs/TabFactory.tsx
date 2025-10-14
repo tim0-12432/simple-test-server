@@ -1,12 +1,12 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type TabType from "@/types/Tab";
-import MqttTab from "./MqttTab";
-import MailTab from "./MailTab";
-import CreateNewTab from "./CreateNewTab";
+import type { TabType } from "@/types/Tab";
+import { MqttTab } from "./MqttTab";
+import { MailTab } from "./MailTab";
+import { CreateNewTab } from "./CreateNewTab";
 import { TriangleAlertIcon } from "lucide-react";
-import WebTab from "./WebTab";
-import FtpTab from "./FtpTab";
-import SmbTab from "./SmbTab";
+import { WebTab } from "./WebTab";
+import { FtpTab } from "./FtpTab";
+import { SmbTab } from "./SmbTab";
 
 
 export type GeneralTabInformation = {
@@ -15,7 +15,7 @@ export type GeneralTabInformation = {
     reloadTabs: () => void;
 }
 
-const TabFactory = (type: TabType, params: GeneralTabInformation) => {
+export function TabFactory(type: TabType, params: GeneralTabInformation) {
     let component = null;
     switch (type) {
         case 'create_new':
@@ -50,5 +50,3 @@ const TabFactory = (type: TabType, params: GeneralTabInformation) => {
     }
     return component;
 }
-
-export default TabFactory;

@@ -7,7 +7,7 @@ vi.mock('@/lib/api', () => ({
 }));
 
 import { fetchWebLogs } from '@/lib/api';
-import LogsPanel from '../LogsPanel';
+import { LogsPanel } from '../LogsPanel';
 
 describe('LogsPanel', () => {
   beforeEach(() => {

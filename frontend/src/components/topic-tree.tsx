@@ -1,4 +1,4 @@
-import type MqttData from "@/types/MqttData";
+import type { MqttData } from "@/types/MqttData";
 import { TreeNode, TreeExpander, TreeIcon, TreeNodeContent, TreeNodeTrigger, TreeProvider, TreeView, type TreeLabelProps, TreeLabel } from "./ui/kibo-ui/tree";
 import {Folder, FileJson} from "lucide-react"
 import { useEffect, useState } from "react";
@@ -130,7 +130,7 @@ const TopicTree = (props: TopicTreeProps) => {
     return <div>Loading...</div>;
 };
 
-export default TopicTree;
+export { TopicTree };
 
 const PayloadTreeLabel = (props: TreeLabelProps) => (
   <span className='font flex-1 wrap-anywhere text-sm' {...props} />

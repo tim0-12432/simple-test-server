@@ -1,12 +1,12 @@
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 
 type TabAccordionProps = {
     id: string;
     title: string;
     icon: ReactElement;
-    children?: ReactElement | ReactElement[] | null;
+    children?: ReactNode;
     tabActions?: ReactElement | ReactElement[] | null;
 }
 

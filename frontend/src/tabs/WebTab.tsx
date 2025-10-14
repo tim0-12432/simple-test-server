@@ -7,15 +7,15 @@ import TabAccordion from "../components/tab-accordion";
 import ServerInformation from "../components/server-information";
 import { Button } from "../components/ui/button";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../components/ui/kibo-ui/dropzone";
-import FileTreeView from "../components/filetree/FileTreeView";
-import Progress from "@/components/progress";
-import LogsPanel from "./LogsPanel";
+import { FileTreeView } from "../components/filetree/FileTreeView";
+import { Progress } from "@/components/progress";
+import { LogsPanel } from "./LogsPanel";
 
 type WebTabProps = GeneralTabInformation & {
 
 }
 
-const WebTab = (props: WebTabProps) => {
+export function WebTab(props: WebTabProps) {
     const [error, setError] = useState<string | null>(null);
     const [droppedFiles, setDroppedFiles] = useState<File[]|undefined>();
     const [port, _setPort] = useState<number>(80);
@@ -103,19 +103,17 @@ const WebTab = (props: WebTabProps) => {
                         <DropzoneContent />
                     </Dropzone>
                     <Progress active={uploading} value={uploadProgress} className="w-full mb-2 h-2" />
-                    {
-                        uploadedUrl ? (
-                            <div className="w-full mt-2">
-                                <a className="text-primary underline" 
-                                   href={uploadedUrl}
-                                   target="_blank"
-                                   rel="noreferrer">
-                                    Open uploaded resource
-                                </a>
-                            </div>
-                        ) : <></>
-                    }
-                    <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0 || uploading} onClick={submitUploadFiles}>{uploading ? 'Uploading...' : 'Upload'}</Button>
+                    {uploadedUrl ? (
+                        <div className="w-full mt-2">
+                            <a className="text-primary underline" 
+                               href={uploadedUrl}
+                               target="_blank"
+                               rel="noreferrer">
+                                Open uploaded resource
+                            </a>
+                        </div>
+                    ) : null}
+                    <Button className="w-full mt-4" disabled={!droppedFiles || droppedFiles.length === 0 || uploading} onClick={submitUploadFiles}>{uploading ? ('Uploading...') : ('Upload')}</Button>
                 </TabAccordion>
                 <TabAccordion id='access_logs'
                               icon={<OctagonAlertIcon />}
@@ -129,5 +127,3 @@ const WebTab = (props: WebTabProps) => {
         </div>
     );
 }
-
-export default WebTab;

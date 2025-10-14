@@ -7,14 +7,14 @@ import TabAccordion from '../components/tab-accordion';
 import ServerInformation from '../components/server-information';
 import { Button } from '../components/ui/button';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '../components/ui/kibo-ui/dropzone';
-import FileTreeView from '../components/filetree/FileTreeView';
-import Progress from '@/components/progress';
+import { FileTreeView } from '../components/filetree/FileTreeView';
+import { Progress } from '@/components/progress';
 
 type FtpTabProps = GeneralTabInformation & {
 
 }
 
-const FtpTab = (props: FtpTabProps) => {
+export function FtpTab(props: FtpTabProps) {
   const [error, setError] = useState<string | null>(null);
   const [droppedFiles, setDroppedFiles] = useState<File[] | undefined>();
   const [uploading, setUploading] = useState<boolean>(false);
@@ -95,6 +95,4 @@ const FtpTab = (props: FtpTabProps) => {
       </Accordion>
     </div>
   );
-};
-
-export default FtpTab;
+}

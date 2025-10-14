@@ -12,7 +12,7 @@ vi.mock('@/lib/api', () => ({
     })),
 }));
 
-import MqttTab from './MqttTab';
+import { MqttTab } from './MqttTab';
 
 const baseProps = {
     type: 'MQTT',

@@ -55,7 +55,7 @@ describe('uploadFile', () => {
     const file = new File(['x'], 'x.txt', { type: 'text/plain' });
     // call uploadFile with serverType 'ftp'
     const p = uploadFile('server-ftp', file, 'ftp');
-    const res = await p;
+    await p;
     expect(mockXhr.lastOpenUrl).toContain('/protocols/ftp/');
   });
 });

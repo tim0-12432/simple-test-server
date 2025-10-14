@@ -22,7 +22,7 @@ func fetchEmailMessages(ctx context.Context, host string, port int, limit int) (
 
 	result := make([]MailSummary, 0)
 
-	resp, err := http.Get("http://" + host + ":" + string(port) + "/api/v1/messages?limit=" + string(limit))
+	resp, err := http.Get("http://" + host + ":" + fmt.Sprintf("%d", port) + "/api/v1/messages?limit=" + fmt.Sprintf("%d", limit))
 	if err != nil {
 		return result, err
 	}

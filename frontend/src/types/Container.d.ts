@@ -1,4 +1,4 @@
-import type ServerType from "./Server";
+import type { ServerType } from "./Server";
 
 
 export type Container = {
@@ -17,4 +17,5 @@ export type Container = {
     type: ServerType;
 }
 
-export default Container;
+export { Container };
+

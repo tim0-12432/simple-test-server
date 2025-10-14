@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import SmbTab from '../SmbTab';
+import { SmbTab } from '../SmbTab';
 
 const noop = () => {};
 

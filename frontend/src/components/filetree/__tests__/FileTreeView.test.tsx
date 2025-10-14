@@ -8,7 +8,7 @@ vi.mock('@/lib/api', () => ({
 }));
 
 import { fetchWebFileTree } from '@/lib/api';
-import FileTreeView from '../FileTreeView';
+import { FileTreeView } from '../FileTreeView';
 
 describe('FileTreeView', () => {
   beforeEach(() => {

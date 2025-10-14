@@ -1,11 +1,10 @@
-import React from 'react';
-import type MqttData from '@/types/MqttData';
+import type { MqttData } from '@/types/MqttData';
 
 type MessageLogProps = {
     messages: MqttData[];
 };
 
-export default function MessageLog({ messages }: MessageLogProps) {
+export function MessageLog({ messages }: MessageLogProps) {
     if (!messages || messages.length === 0) {
         return <div className="text-sm text-muted-foreground">No messages received yet</div>;
     }

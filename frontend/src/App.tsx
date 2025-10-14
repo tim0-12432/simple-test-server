@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { ThemeProvider } from "@/components/theme-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
 import type { Tab } from './types/Tab';
-import TabFactory from './tabs/TabFactory';
+import { TabFactory } from './tabs/TabFactory';
 import { ModeToggle } from './components/mode-toggle';
 import { getIconForTabType } from './lib/tabs';
-import type Container from './types/Container';
+import type { Container } from './types/Container';
 import { request } from './lib/api';
 
 function App() {

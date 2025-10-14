@@ -3,9 +3,9 @@ import type { GeneralTabInformation } from "./TabFactory";
 import { websocketConnect } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon, FolderTree, ScrollText, CircleCheck, CircleX, Trash } from "lucide-react";
-import type MqttData from "@/types/MqttData";
-import TopicTree from "@/components/topic-tree";
-import MessageLog from "@/components/message-log/MessageLog";
+import type { MqttData } from "@/types/MqttData";
+import { TopicTree } from "@/components/topic-tree";
+import { MessageLog } from "@/components/message-log/MessageLog";
 import { Accordion } from "@/components/ui/accordion";
 import TabAccordion from "@/components/tab-accordion";
 import ServerInformation from "@/components/server-information";
@@ -15,7 +15,7 @@ type MqttTabProps = GeneralTabInformation & {
 
 }
 
-const MqttTab = (props: MqttTabProps) => {
+export function MqttTab(props: MqttTabProps) {
     const [error, setError] = useState<string | null>(null);
     const [messages, setMessages] = useState<MqttData[]>([]);
 
@@ -109,5 +109,3 @@ const MqttTab = (props: MqttTabProps) => {
         </div>
     );
 }
-
-export default MqttTab;
