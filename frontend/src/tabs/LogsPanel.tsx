@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/progress';
-import { useWebLogs } from '@/lib/useWebLogs';
+import { useServerLogs } from '@/lib/useServerLogs';
 import type { LogLine } from '@/types/Log';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function LogsPanel({ serverId, refreshSignal }: { serverId: string; refreshSignal?: number }) {
+type LogsPanelProps = {
+    serverId: string;
+    refreshSignal?: number;
+    serverType?: 'web' | 'mail';
+};
+
+export function LogsPanel({ serverId, refreshSignal, serverType = 'web' }: LogsPanelProps) {
     const [tail, setTail] = useState<number>(500);
     const [localRefresh, setLocalRefresh] = useState<number>(0);
-    const { lines, loading, error, truncated } = useWebLogs(serverId, tail, (refreshSignal ?? 0) + localRefresh);
+    const { lines, loading, error, truncated } = useServerLogs(serverId, serverType, tail, (refreshSignal ?? 0) + localRefresh);
 
     const handleLocalRefresh = (e?: React.MouseEvent) => {
         if (e) e.stopPropagation();

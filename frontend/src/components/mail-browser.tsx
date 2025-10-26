@@ -10,8 +10,8 @@ type MailBrowserProps = {
 
 const MailBrowser = (props: MailBrowserProps) => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [mailMessages, setMailMessages] = useState<any[]>([]);
-    const [selectedMessage, setSelectedMessage] = useState<MailData | null>(mailMessages.length > 0 ? mailMessages[0] : null);
+    const [mailMessages, setMailMessages] = useState<MailData[]>([]);
+    const [selectedMessage, setSelectedMessage] = useState<MailData | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -37,7 +37,7 @@ const MailBrowser = (props: MailBrowserProps) => {
                             <li key={msg.id}
                                 className={`mt-1 p-2 cursor-pointer rounded-md border-2 ${selectedMessage?.id === msg.id ? 'border-gray-600' : 'border-transparent hover:border-blue-500'}`}
                                 onClick={() => setSelectedMessage(msg)}>
-                                    <div className="font-bold truncate">{msg.content.headers["Subject"] || "(No Subject)"}</div>
+                                    <div className="font-bold truncate">{msg.content.headers["Subject"]?.[0] || "(No Subject)"}</div>
                                     <div className="text-sm text-muted-foreground truncate">From: {msg.from.name}@{msg.from.domain}</div>
                                     <div className="text-sm text-muted-foreground truncate">Date: {new Date(msg.created).toLocaleString()}</div>
                             </li>
@@ -47,7 +47,7 @@ const MailBrowser = (props: MailBrowserProps) => {
                 <div className="w-2/3 h-full overflow-y-auto p-4">
                     {selectedMessage ? (
                         <div>
-                            <h2 className="text-xl font-bold mb-2">{selectedMessage.content.headers["Subject"] || "(No Subject)"}</h2>
+                            <h2 className="text-xl font-bold mb-2">{selectedMessage.content.headers["Subject"]?.[0] || "(No Subject)"}</h2>
                             <div className="text-sm text-muted-foreground mb-4">
                                 Sent: {new Date(selectedMessage.created).toLocaleString()} <br />
                                 From: {selectedMessage.from.name}@{selectedMessage.from.domain} <br />

@@ -3,7 +3,6 @@ package docker
 import (
 	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -74,10 +73,6 @@ func FetchContainerLogs(ctx context.Context, containerName string, tail int, sin
 	}
 
 	// Determine running state
-	if strings.ToUpper(container.Type) != "WEB" {
-		return nil, false, errors.New("container is not a web server")
-	}
-
 	if container.Status != dtos.Running {
 		return lines, truncated, ErrContainerNotRunning
 	}

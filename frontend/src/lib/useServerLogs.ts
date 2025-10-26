@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import type { LogLine } from '@/types/Log';
-import { fetchWebLogs } from './api';
+import { fetchServerLogs } from './api';
 
-export function useWebLogs(serverId: string, tail: number = 500, refreshSignal?: number) {
+export function useServerLogs(serverId: string, type: 'web' | 'mail', tail: number = 500, refreshSignal?: number) {
     const [lines, setLines] = useState<LogLine[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export function useWebLogs(serverId: string, tail: number = 500, refreshSignal?:
         setError(null);
         (async () => {
             try {
-                const res = await fetchWebLogs(serverId, tail);
+                const res = await fetchServerLogs(serverId, type, tail);
                 if (cancelled) return;
                 setLines(res.lines);
                 setTruncated(res.truncated);
