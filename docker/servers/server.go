@@ -25,6 +25,7 @@ func GetAllServers() []ServerInformation {
 		FtpServer{},
 		SmbServer{},
 		MailServer{},
+		OtelServer{},
 	}
 	var serverInfo []ServerInformation
 	for _, server := range servers {
@@ -52,6 +53,8 @@ func GetServerByType(serverType string) (*ServerInformation, error) {
 		serverDefinition = SmbServer{}
 	case "MAIL":
 		serverDefinition = MailServer{}
+	case "OTEL":
+		serverDefinition = OtelServer{}
 	default:
 		return nil, fmt.Errorf("unknown server type: %s", serverType)
 	}

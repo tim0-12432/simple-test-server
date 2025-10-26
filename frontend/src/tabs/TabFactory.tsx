@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { TabType } from "@/types/Tab";
 import { MqttTab } from "./MqttTab";
+import { OtelTab } from "./OtelTab";
 import { MailTab } from "./MailTab";
 import { CreateNewTab } from "./CreateNewTab";
 import { TriangleAlertIcon } from "lucide-react";
@@ -36,7 +37,11 @@ export function TabFactory(type: TabType, params: GeneralTabInformation) {
         case 'MAIL':
             component = <MailTab {...params} />;
             break;
+        case 'OTEL':
+            component = <OtelTab {...params} />;
+            break;
         default:
+
             component = (
                 <Alert className="bg-amber-500/10 dark:bg-amber-600/30 border-amber-300 dark:border-amber-600/70">
                     <TriangleAlertIcon className="h-4 w-4 !text-amber-500" />

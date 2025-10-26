@@ -31,8 +31,9 @@ export function websocketConnect<T>(url: string, onMessage: (msg: T) => void, on
         try {
             const data = JSON.parse(event.data);
             onMessage(data);
-        } catch (error) {
-            console.error('WebSocket message parsing error:', error);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+            onMessage(event.data as unknown as T);
         }
     };
     ws.onerror = (event) => {
@@ -72,6 +73,7 @@ export function uploadFile(serverId: string, file: File, serverType: string, onP
                     const pct = Math.round((ev.loaded / ev.total) * 100);
                     try {
                         onProgress(pct);
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     } catch (e) {
                         // ignore
                     }

@@ -149,13 +149,13 @@ export function CreateNewTab(props: CreateNewTabProps) {
                         <div className="w-full space-y-1.5">
                             <Label htmlFor="server-type">Server Type</Label>
                             <Select disabled={loading} onValueChange={handleTypeChange} defaultValue={serverTypes[0]}>
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="w-full cursor-pointer">
                                     <SelectValue placeholder="Select server type" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {
                                         serverTypes.map((type) => (
-                                            <SelectItem key={type} value={type}>
+                                            <SelectItem key={type} value={type} className="cursor-pointer">
                                                 {getIconForTabType(type)} {type}
                                             </SelectItem>
                                         ))
@@ -197,7 +197,7 @@ export function CreateNewTab(props: CreateNewTabProps) {
                                 For example, "ENV=PROD" will set the environment variable ENV to PROD in the container.
                             </p>
                         </div>
-                        <Button onClick={handleSubmit} disabled={loading} className="w-full">
+                        <Button onClick={handleSubmit} disabled={loading} className="w-full cursor-pointer">
                             {loading ? <>{loadingState?.message} <Spinner variant="circle" /></> : "Create"}
                         </Button>
                     </div>

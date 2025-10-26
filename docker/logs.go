@@ -156,3 +156,141 @@ func GetContainerLogs(ctx context.Context, containerId string, tail int) (string
 	}
 	return string(out), nil
 }
+
+// StreamCommandRunner is the interface for running streaming commands. Tests can inject a mock.
+type StreamCommandRunner interface {
+	Start() error
+	StdoutPipe() (StreamReader, error)
+	StderrPipe() (StreamReader, error)
+	Wait() error
+}
+
+// StreamReader abstracts reading from command output streams.
+type StreamReader interface {
+	Read(p []byte) (n int, error error)
+}
+
+// ExecCommandStreamFn is injected to start a streaming command. Tests replace this to inject mock behavior.
+var ExecCommandStreamFn = func(ctx context.Context, name string, args ...string) StreamCommandRunner {
+	return &realCommandRunner{
+		cmd: exec.CommandContext(ctx, name, args...),
+	}
+}
+
+// realCommandRunner wraps exec.Cmd to implement StreamCommandRunner.
+type realCommandRunner struct {
+	cmd *exec.Cmd
+}
+
+func (r *realCommandRunner) Start() error {
+	return r.cmd.Start()
+}
+
+func (r *realCommandRunner) StdoutPipe() (StreamReader, error) {
+	return r.cmd.StdoutPipe()
+}
+
+func (r *realCommandRunner) StderrPipe() (StreamReader, error) {
+	return r.cmd.StderrPipe()
+}
+
+func (r *realCommandRunner) Wait() error {
+	return r.cmd.Wait()
+}
+
+// StreamContainerLogs streams docker logs for a container in real-time using `docker logs -f`.
+// It sends each log line to the onLine callback. Blocks until context is cancelled or command finishes.
+// Returns error if container not found or command fails to start.
+func StreamContainerLogs(ctx context.Context, containerID string, onLine func(line string)) error {
+	// Validate container exists in our registry
+	container, err := getContainerFn(containerID)
+	if err != nil {
+		return ErrContainerNotFound
+	}
+
+	// build command: docker logs -f --tail=50 <containerName>
+	args := []string{"logs", "-f", "--tail", "50", container.Name}
+
+	// start streaming command
+	cmd := ExecCommandStreamFn(ctx, "docker", args...)
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("failed to get stdout pipe: %w", err)
+	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return fmt.Errorf("failed to get stderr pipe: %w", err)
+	}
+
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to start docker logs: %w", err)
+	}
+
+	// goroutine to read stdout
+	stdoutDone := make(chan struct{})
+	go func() {
+		defer close(stdoutDone)
+		scanner := bufio.NewScanner(stdout)
+		buf := make([]byte, 0, 64*1024)
+		scanner.Buffer(buf, MaxLineLen)
+		for scanner.Scan() {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				line := scanner.Text()
+				if len(line) > MaxLineLen {
+					line = line[:MaxLineLen]
+				}
+				onLine(line)
+			}
+		}
+	}()
+
+	// goroutine to read stderr
+	stderrDone := make(chan struct{})
+	go func() {
+		defer close(stderrDone)
+		scanner := bufio.NewScanner(stderr)
+		buf := make([]byte, 0, 64*1024)
+		scanner.Buffer(buf, MaxLineLen)
+		for scanner.Scan() {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				line := scanner.Text()
+				if len(line) > MaxLineLen {
+					line = line[:MaxLineLen]
+				}
+				onLine(line)
+			}
+		}
+	}()
+
+	// wait for context cancellation or command completion
+	done := make(chan error, 1)
+	go func() {
+		done <- cmd.Wait()
+	}()
+
+	select {
+	case <-ctx.Done():
+		// context cancelled, wait for goroutines to finish
+		<-stdoutDone
+		<-stderrDone
+		return ctx.Err()
+	case err := <-done:
+		// command finished
+		<-stdoutDone
+		<-stderrDone
+		if err != nil {
+			// check if container not found
+			if strings.Contains(err.Error(), "No such container") {
+				return ErrContainerNotFound
+			}
+			return fmt.Errorf("docker logs command failed: %w", err)
+		}
+		return nil
+	}
+}
