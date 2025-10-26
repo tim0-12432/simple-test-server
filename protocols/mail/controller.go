@@ -24,7 +24,6 @@ func listMessagesHandler(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Container ports: %+v\n", container.Ports) // Debugging line
 	httpPort, ok := container.Ports[8025]
 	if !ok || httpPort == 0 {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "HTTP port not found in container configuration"})

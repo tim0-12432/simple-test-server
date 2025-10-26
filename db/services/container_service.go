@@ -82,16 +82,24 @@ func ListContainers() ([]*dtos.Container, error) {
 	for _, r := range recs {
 		c := &dtos.Container{}
 		c.ID = db.ToString(r.Get("container_id"))
+		c.Type = db.ToString(r.Get("type"))
 		c.Name = db.ToString(r.Get("name"))
 		c.Image = db.ToString(r.Get("image"))
-		c.CreatedAt = db.ToIn64(r.Get("created_at"))
+		c.CreatedAt = db.ToInt64(r.Get("created_at"))
 		c.Status = dtos.ToStatus(db.ToString(r.Get("status")))
+		c.Networks = r.GetStringSlice("networks")
 
-		c.Environment = db.ToStringMap(r.Get("environment"))
-		c.Volumes = db.ToStringMap(r.Get("volumes"))
-		c.Networks = db.ToStringSlice(r.Get("networks"))
-		c.Ports = db.ToIntMap(r.Get("ports"))
-		c.Type = db.ToString(r.Get("type"))
+		var environment map[string]string
+		r.UnmarshalJSONField("environment", &environment)
+		c.Environment = db.ToStringMap(environment)
+
+		var volumes map[string]string
+		r.UnmarshalJSONField("volumes", &volumes)
+		c.Volumes = db.ToStringMap(volumes)
+
+		var ports map[string]int
+		r.UnmarshalJSONField("ports", &ports)
+		c.Ports = db.ToIntMap(ports)
 
 		out = append(out, c)
 	}
@@ -161,16 +169,24 @@ func GetContainer(id string) (*dtos.Container, error) {
 
 	c := &dtos.Container{}
 	c.ID = db.ToString(rec.Get("container_id"))
+	c.Type = db.ToString(rec.Get("type"))
 	c.Name = db.ToString(rec.Get("name"))
 	c.Image = db.ToString(rec.Get("image"))
-	c.CreatedAt = db.ToIn64(rec.Get("created_at"))
+	c.CreatedAt = db.ToInt64(rec.Get("created_at"))
 	c.Status = dtos.ToStatus(db.ToString(rec.Get("status")))
+	c.Networks = rec.GetStringSlice("networks")
 
-	c.Environment = db.ToStringMap(rec.Get("environment"))
-	c.Volumes = db.ToStringMap(rec.Get("volumes"))
-	c.Networks = db.ToStringSlice(rec.Get("networks"))
-	c.Ports = db.ToIntMap(rec.Get("ports"))
-	c.Type = db.ToString(rec.Get("type"))
+	var environment map[string]string
+	rec.UnmarshalJSONField("environment", &environment)
+	c.Environment = db.ToStringMap(environment)
+
+	var volumes map[string]string
+	rec.UnmarshalJSONField("volumes", &volumes)
+	c.Volumes = db.ToStringMap(volumes)
+
+	var ports map[string]int
+	rec.UnmarshalJSONField("ports", &ports)
+	c.Ports = db.ToIntMap(ports)
 
 	return c, nil
 }

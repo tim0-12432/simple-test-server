@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Clear containers",
+    "method": "DELETE",
+    "url": "http://localhost:8000/api/v1/containers/clear",
+    "logBody": true
+  },
+  {
+    "name": "Create Mail Server",
+    "method": "POST",
+    "url": "http://localhost:8000/api/v1/servers/MAIL",
+    "headers": { "Content-Type": "application/json" },
+    "body": {
+      "env": {},
+      "image": "mailhog/mailhog:latest",
+      "name": "",
+      "ports": [
+        { "1025": 1025 },
+        { "8025": 8025 }
+      ]
+    },
+    "logBody": true
+  },
+  {
+    "name": "List containers",
+    "method": "GET",
+    "url": "http://localhost:8000/api/v1/containers",
+    "logBody": true
+  },
+  {
+    "name": "List E-mails",
+    "method": "GET",
+    "url": "http://localhost:8000/api/v1/protocols/mail/{{server_id}}/messages",
+    "logBody": true
+  }
+]

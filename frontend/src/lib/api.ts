@@ -84,7 +84,9 @@ export function uploadFile(serverId: string, file: File, serverType: string, onP
     });
 }
 
+import type MailSummary from '@/types/MailData';
 import type { FileTreeResponse } from '../types/FileTree';
+import type { LogResponse } from '../types/Log';
 
 export async function fetchFileTree(serverType: string, serverId: string, path: string | null = null): Promise<FileTreeResponse> {
     const p = path ? `?path=${encodeURIComponent(path)}` : '';
@@ -92,9 +94,6 @@ export async function fetchFileTree(serverType: string, serverId: string, path: 
     const res = await request<FileTreeResponse>("GET", url, undefined);
     return res;
 }
-
-// Logs
-import type { LogResponse } from '../types/Log';
 
 export async function fetchWebLogs(serverId: string, tail: number = 500): Promise<LogResponse> {
     const url = `/protocols/web/${encodeURIComponent(serverId)}/logs?tail=${tail}`;
@@ -104,6 +103,12 @@ export async function fetchWebLogs(serverId: string, tail: number = 500): Promis
 
 export async function fetchWebFileTree(serverId: string, path: string | null = null): Promise<FileTreeResponse> {
     return fetchFileTree('web', serverId, path);
+}
+
+export async function fetchMailMessages(serverId: string) {
+    const url = `/protocols/mail/${encodeURIComponent(serverId)}/messages`;
+    const res = await request<MailSummary>("GET", url, undefined);
+    return res.emails;
 }
 
 export default request;

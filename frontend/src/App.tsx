@@ -36,7 +36,7 @@ function App() {
 
   function addCreateTab(tabs: Tab[]) {
     const createTab: Tab = {
-      name: "",
+      name: "Create New",
       id: "create_new",
       type: "create_new"
     };

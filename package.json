@@ -1,0 +1,16 @@
+{
+  "name": "simple-test-server-dev",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=14"
+  },
+  "scripts": {
+    "dev": "node dev/watch-dev.js",
+    "dev:go": "node dev/watch-dev.js"
+  },
+  "devDependencies": {
+    "chokidar": "^3.5.3"
+  }
+}

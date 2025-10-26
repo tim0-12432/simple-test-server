@@ -4,3 +4,4 @@ pb_data/
 *.env
 .vscode/mcp.json
 node_modules/
+dev_server*
