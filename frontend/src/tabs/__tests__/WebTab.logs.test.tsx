@@ -3,10 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 
 vi.mock('@/lib/api', () => ({
-  fetchWebLogs: vi.fn(),
+  fetchServerLogs: vi.fn(),
 }));
 
-import { fetchWebLogs } from '@/lib/api';
+import { fetchServerLogs } from '@/lib/api';
 import { LogsPanel } from '../LogsPanel';
 
 describe('LogsPanel', () => {
@@ -16,7 +16,7 @@ describe('LogsPanel', () => {
 
   it('renders lines from API', async () => {
     const now = new Date().toISOString();
-    (fetchWebLogs as any).mockResolvedValue({ lines: [ { ts: now, line: '127.0.0.1 - - "GET /index.html HTTP/1.1" 200 123' } ], truncated: false, container_running: true });
+    (fetchServerLogs as any).mockResolvedValue({ lines: [ { ts: now, line: '127.0.0.1 - - "GET /index.html HTTP/1.1" 200 123' } ], truncated: false, container_running: true });
 
     render(<LogsPanel serverId="server-1" />);
 
@@ -25,7 +25,7 @@ describe('LogsPanel', () => {
 
   it('shows truncated indicator', async () => {
     const now = new Date().toISOString();
-    (fetchWebLogs as any).mockResolvedValue({ lines: [ { ts: now, line: 'line1' } ], truncated: true, container_running: true });
+    (fetchServerLogs as any).mockResolvedValue({ lines: [ { ts: now, line: 'line1' } ], truncated: true, container_running: true });
 
     render(<LogsPanel serverId="server-1" />);
 

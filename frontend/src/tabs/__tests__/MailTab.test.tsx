@@ -7,17 +7,17 @@ import { MailTab } from '../MailTab';
 vi.mock('@/lib/api', () => ({
   default: vi.fn(),
   request: vi.fn(),
-  fetchMailLogs: vi.fn(),
+  fetchServerLogs: vi.fn(),
   fetchMailMessages: vi.fn(),
 }));
 
-import { fetchMailLogs, fetchMailMessages } from '@/lib/api';
+import { fetchServerLogs, fetchMailMessages } from '@/lib/api';
 
 describe('MailTab', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     (fetchMailMessages as any).mockResolvedValue([]);
-    (fetchMailLogs as any).mockResolvedValue({
+    (fetchServerLogs as any).mockResolvedValue({
       lines: [],
       truncated: false,
       container_running: true,
@@ -37,7 +37,7 @@ describe('MailTab', () => {
   it('displays mail logs when backend returns logs', async () => {
     const user = userEvent.setup();
     const now = new Date().toISOString();
-    (fetchMailLogs as any).mockResolvedValue({
+    (fetchServerLogs as any).mockResolvedValue({
       lines: [
         { ts: now, line: 'SMTP server started on port 1025' },
         { ts: now, line: 'Received mail from sender@test.com' },

@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useMailLogs } from '../useMailLogs';
+import { useServerLogs } from '../useServerLogs';
 
 vi.mock('../api', () => ({
   API_URL: 'http://localhost',
@@ -8,15 +8,14 @@ vi.mock('../api', () => ({
   websocketConnect: vi.fn(),
   uploadFile: vi.fn(),
   fetchFileTree: vi.fn(),
-  fetchWebLogs: vi.fn(),
   fetchWebFileTree: vi.fn(),
   fetchMailMessages: vi.fn(),
-  fetchMailLogs: vi.fn(),
+  fetchServerLogs: vi.fn(),
 }));
 
-import { fetchMailLogs } from '../api';
+import { fetchServerLogs } from '../api';
 
-describe('useMailLogs', () => {
+describe('useServerLogs', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -32,16 +31,16 @@ describe('useMailLogs', () => {
       container_running: true,
     };
 
-    (fetchMailLogs as any).mockResolvedValue(mockLogs);
+    (fetchServerLogs as any).mockResolvedValue(mockLogs);
 
-    const { result } = renderHook(() => useMailLogs('mail-server-1', 500));
+    const { result } = renderHook(() => useServerLogs('mail-server-1', 'mail', 500));
 
     expect(result.current.loading).toBe(true);
     expect(result.current.lines).toEqual([]);
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(fetchMailLogs).toHaveBeenCalledWith('mail-server-1', 500);
+    expect(fetchServerLogs).toHaveBeenCalledWith('mail-server-1', 'mail', 500);
     expect(result.current.lines).toHaveLength(2);
     expect(result.current.lines[0].line).toBe('SMTP server started on port 1025');
     expect(result.current.truncated).toBe(false);
@@ -49,9 +48,9 @@ describe('useMailLogs', () => {
   });
 
   it('handles errors when fetching logs', async () => {
-    (fetchMailLogs as any).mockRejectedValue(new Error('Network error'));
+    (fetchServerLogs as any).mockRejectedValue(new Error('Network error'));
 
-    const { result } = renderHook(() => useMailLogs('mail-server-1'));
+    const { result } = renderHook(() => useServerLogs('mail-server-1', 'mail'));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
@@ -61,13 +60,13 @@ describe('useMailLogs', () => {
 
   it('sets truncated flag when logs are truncated', async () => {
     const now = new Date().toISOString();
-    (fetchMailLogs as any).mockResolvedValue({
+    (fetchServerLogs as any).mockResolvedValue({
       lines: [{ ts: now, line: 'log line' }],
       truncated: true,
       container_running: true,
     });
 
-    const { result } = renderHook(() => useMailLogs('mail-server-1', 50));
+    const { result } = renderHook(() => useServerLogs('mail-server-1', 'mail', 50));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
@@ -76,21 +75,21 @@ describe('useMailLogs', () => {
 
   it('refetches logs when refreshSignal changes', async () => {
     const now = new Date().toISOString();
-    (fetchMailLogs as any).mockResolvedValue({
+    (fetchServerLogs as any).mockResolvedValue({
       lines: [{ ts: now, line: 'initial log' }],
       truncated: false,
       container_running: true,
     });
 
     const { result, rerender } = renderHook(
-      ({ signal }) => useMailLogs('mail-server-1', 500, signal),
+      ({ signal }) => useServerLogs('mail-server-1', 'mail', 500, signal),
       { initialProps: { signal: 0 } }
     );
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(fetchMailLogs).toHaveBeenCalledTimes(1);
+    expect(fetchServerLogs).toHaveBeenCalledTimes(1);
 
-    (fetchMailLogs as any).mockResolvedValue({
+    (fetchServerLogs as any).mockResolvedValue({
       lines: [{ ts: now, line: 'refreshed log' }],
       truncated: false,
       container_running: true,
@@ -98,7 +97,7 @@ describe('useMailLogs', () => {
 
     rerender({ signal: 1 });
 
-    await waitFor(() => expect(fetchMailLogs).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(fetchServerLogs).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(result.current.lines[0].line).toBe('refreshed log'));
   });
 });

@@ -86,18 +86,8 @@ func getMessageHandler(c *gin.Context) {
 
 func getLogsHandler(c *gin.Context) {
 	serverID := c.Param("id")
-	container, err := services.GetContainer(serverID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "container not found"})
-		return
-	}
 
-	if strings.ToUpper(container.Type) != "MAIL" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "container is not a mail server"})
-		return
-	}
-
-	// parse query params
+	// Validate query params first (before checking container existence)
 	tail := 500
 	if t := c.Query("tail"); t != "" {
 		if n, perr := strconv.Atoi(t); perr == nil {
@@ -109,6 +99,17 @@ func getLogsHandler(c *gin.Context) {
 	}
 	if tail < 1 || tail > 5000 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "tail must be between 1 and 5000"})
+		return
+	}
+
+	container, err := services.GetContainer(serverID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "container not found"})
+		return
+	}
+
+	if strings.ToUpper(container.Type) != "MAIL" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "container is not a mail server"})
 		return
 	}
 
