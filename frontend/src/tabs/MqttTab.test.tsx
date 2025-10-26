@@ -10,6 +10,7 @@ vi.mock('@/lib/api', () => ({
         onerror: null,
         close: vi.fn(),
     })),
+    default: vi.fn(() => Promise.resolve({})),
 }));
 
 import { MqttTab } from './MqttTab';

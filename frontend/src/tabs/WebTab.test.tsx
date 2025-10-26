@@ -15,7 +15,8 @@ vi.mock('../lib/api', () => ({
       }
       resolve({ url: 'http://localhost:8000/test' });
     });
-  })
+  }),
+  default: vi.fn(() => Promise.resolve({})),
 }));
 
 // Simple component stubs that render children so tests can assert visible text

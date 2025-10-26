@@ -60,7 +60,7 @@ const ServerInformation = (props: ServerInformationProps) => {
                         <div className="flex">
                             <div className="flex-grow flex flex-col">
                                 <label htmlFor="type" className="text-sm font-normal text-muted-foreground">Type:</label>
-                                <p id="type" className="font-semibold mb-2 inline-flex gap-2 items-center">{info.type} {getIconForTabType(info.type, {class: 'size-4'})}</p>
+                                <p id="type" className="font-semibold mb-2 inline-flex gap-2 items-center">{info.type} {getIconForTabType(info.type, {className: 'size-4'})}</p>
                                 <label htmlFor="id" className="text-sm font-normal text-muted-foreground">ID:</label>
                                 <p id="id" className="font-semibold mb-2">{info.container_id}</p>
                                 <label htmlFor="creation" className="text-sm font-normal text-muted-foreground">Created at:</label>

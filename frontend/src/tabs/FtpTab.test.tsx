@@ -14,8 +14,10 @@ vi.mock('../lib/api', () => ({
       }
       resolve({ url: 'ftp://localhost/test' });
     });
-  })
+  }),
+  default: vi.fn(() => Promise.resolve({})),
 }));
+
 
 vi.mock('../components/ui/alert', () => ({
   Alert: (props: any) => React.createElement('div', {}, props.children),

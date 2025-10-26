@@ -32,6 +32,8 @@ func StartServerWithProgress(reqId string, serverType string, config ServerConfi
 		server = servers.SmbServer{}
 	case "MAIL":
 		server = servers.MailServer{}
+	case "OTEL":
+		server = servers.OtelServer{}
 	default:
 		msg := fmt.Sprintf("Unknown server type: %s", serverType)
 		log.Print(msg)

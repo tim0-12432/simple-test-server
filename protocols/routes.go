@@ -5,6 +5,7 @@ import (
 	"github.com/tim0-12432/simple-test-server/protocols/ftp"
 	"github.com/tim0-12432/simple-test-server/protocols/mail"
 	"github.com/tim0-12432/simple-test-server/protocols/mqtt"
+	"github.com/tim0-12432/simple-test-server/protocols/otel"
 	"github.com/tim0-12432/simple-test-server/protocols/smb"
 	"github.com/tim0-12432/simple-test-server/protocols/web"
 )
@@ -17,4 +18,5 @@ func InitializeProtocolRoutes(root *gin.RouterGroup) {
 	ftp.InitializeFtpProtocolRoutes(protocols)
 	smb.InitializeSmbProtocolRoutes(protocols)
 	mail.InitializeMailProtocolRoutes(protocols)
+	otel.InitializeOtelProtocolRoutes(protocols)
 }
