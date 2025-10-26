@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { GeneralTabInformation } from "./TabFactory";
 import ServerInformation from "../components/server-information";
 import { Accordion } from "../components/ui/accordion";
