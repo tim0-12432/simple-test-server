@@ -6,4 +6,4 @@ docker run -d \
   -p 8080:8080 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --restart unless-stopped \
-  simple-test-server:latest
+  ghcr.io/tim0-12432/simple-test-server-2:latest

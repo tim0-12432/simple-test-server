@@ -15,7 +15,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go test ./...
+RUN go test ./... -cover -v
 
 ARG CGO_ENABLED=0
 ENV CGO_ENABLED=${CGO_ENABLED}
